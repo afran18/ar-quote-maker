@@ -1,0 +1,28 @@
+h2 {
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+    margin: auto;
+}
+
+button{
+    padding: 12px 18px;
+  border: none;
+  border-radius: 6px;
+  background-color: #3674b5;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+}
+
+button:hover {
+    background-color: #2b5d97;
+}

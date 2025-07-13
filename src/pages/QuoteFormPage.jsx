@@ -4,6 +4,8 @@ import QuoteDetails from "../components/QuoteDetails";
 import QuoteForm from "../components/QuoteForm";
 import { calcSqft, calcTotalSqft, calcAmount } from "../utils/calcUtils";
 
+import styles from "./QuoteFormPage.module.css";
+
 function QuoteFormPage() {
   const location = useLocation();
   const customer = location.state || {};
@@ -60,16 +62,17 @@ function QuoteFormPage() {
 
   return (
     <>
-      <div
-        className="quotation-details"
-        style={{ display: "flex", gap: "20px" }}
-      >
-        <QuoteForm
-          form={quoteForm}
-          onChange={handleChange}
-          onAddItem={handleAddItem}
-        />
-        <QuoteDetails customer={customer} items={items} />
+      <div className={styles.container}>
+        <div className={styles.formSection}>
+          <QuoteForm
+            form={quoteForm}
+            onChange={handleChange}
+            onAddItem={handleAddItem}
+          />
+        </div>
+        <div className={styles.detailsSection}>
+          <QuoteDetails customer={customer} items={items} />
+        </div>
       </div>
     </>
   );

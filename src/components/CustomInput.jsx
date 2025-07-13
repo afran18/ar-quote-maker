@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./CustomInput.module.css";
 
 function CustomInput({
   label,
@@ -8,9 +9,10 @@ function CustomInput({
   value,
   onChange,
   required = false,
+  className = "",
 }) {
   return (
-    <div className="input-group">
+    <div className={`${styles.inputGroup} ${className}`}>
       <label htmlFor={id}>{label}</label>
       <input
         type={type}

@@ -8,10 +8,10 @@ function QuoteDetails({ customer, items }) {
   return (
     <div className="quote-items">
       <h2>Customer Info</h2>
-      <p>Name: {customer.name}</p>
-      <p>Phone: {customer.phone}</p>
-      <p>Email: {customer.email}</p>
-      <p>Address: {customer.address}</p>
+      <p>Name: {customer.customerName}</p>
+      <p>Phone: {customer.customerPhone}</p>
+      <p>Email: {customer.customerEmail}</p>
+      <p>Address: {customer.customerAddress}</p>
 
       <h2>Items</h2>
       {items.map((item, idx) => (

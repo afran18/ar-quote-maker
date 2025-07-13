@@ -1,11 +1,11 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import CustomerDetails from "./pages/CustomerDetails";
+import CustomerDetailsPage from "./pages/CustomerDetailsPage";
 import QuoteFormPage from "./pages/QuoteFormPage";
 import "./App.css";
 
 function App() {
   const router = createBrowserRouter([
-    { path: "/", element: <CustomerDetails /> },
+    { path: "/", element: <CustomerDetailsPage /> },
     { path: "/quote", element: <QuoteFormPage /> },
   ]);
 

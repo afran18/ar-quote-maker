@@ -1,0 +1,97 @@
+.quoteForm {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 2rem auto; /* centers the form with spacing at bottom */
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+
+.formItem {
+  margin-bottom: 1rem;
+}
+
+.formItemGroup {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.formItemGroup > div {
+  flex: 1;
+  min-width: 140px;
+}
+
+.calculationRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.calculationItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 140px;
+}
+
+.calculationItem h3:first-child {
+  color: #3674b5;
+  margin-bottom: 4px;
+}
+
+.calculationItem h3:last-child {
+  margin-top: 0;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.buttonReset,
+.buttonSubmit {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.buttonReset {
+  background-color: transparent;
+  color: #3674b5;
+}
+
+.buttonSubmit {
+  background-color: #3674b5;
+  color: white;
+}
+
+/* Hover Effects */
+
+
+
+@media (max-width: 600px) {
+  .calculationRow {
+    flex-direction: column;
+  }
+
+  .buttonGroup {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
