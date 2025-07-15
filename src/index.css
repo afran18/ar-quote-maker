@@ -4,15 +4,20 @@
 
   color-scheme: light;
   color: rgba(8, 8, 8, 0.87);
-  background-color: #FFF5C0;
+  background-color: #fff5c0;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-body {
-  font-family: 'Arial', 'Roboto', 'Segoe UI', sans-serif;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
+body {
+  font-family: "Arial", "Roboto", "Segoe UI", sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}

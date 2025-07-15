@@ -82,9 +82,15 @@
 }
 
 /* Hover Effects */
+.buttonReset:hover {
+  text-decoration: underline;
+}
 
+.buttonSubmit:hover {
+  background-color: #2b5d97;
+}
 
-
+/* Optional: Make form content more compact on small screens */
 @media (max-width: 600px) {
   .calculationRow {
     flex-direction: column;

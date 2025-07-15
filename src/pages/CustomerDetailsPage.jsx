@@ -72,7 +72,7 @@ function CustomerDetailsPage() {
           />
         </div>
         
-        <button type="submit">Next</button>
+        <button type="submit" className={styles.buttonCustomerSubmit}>Next</button>
       </form>
     </div>
   );

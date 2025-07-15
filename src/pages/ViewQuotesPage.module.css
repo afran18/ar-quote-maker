@@ -1,0 +1,55 @@
+.container {
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.createBtn {
+  padding: 10px 16px;
+  background-color: #3674b5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.createBtn:hover {
+  background-color: #2b5d97;
+}
+
+.quoteList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.quoteCard {
+  padding: 15px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+}
+
+.quoteCard h3 {
+  margin: 0;
+  color: #333;
+}
+
+.quoteCard p {
+  margin: 5px 0 0;
+  color: #777;
+  font-size: 0.9rem;
+}
