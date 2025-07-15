@@ -67,10 +67,22 @@ function QuoteForm({ form, onChange, onAddItem }) {
           <h3> {Number(form.amount).toFixed(2)}</h3>
         </div>
       </div>
-
-      <div className={styles.buttonGroup}>
-        <button type="reset" className={styles.buttonReset}>Reset</button>
-        <button type="submit" className={styles.buttonSubmit}>Add Item</button>
+      <div className={styles.dateAndButtonsRow}>
+        <h3>
+          Date: {new Date().toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}
+        </h3>
+        <div className={styles.buttonGroup}>
+          <button type="reset" className={styles.buttonReset}>
+            Reset
+          </button>
+          <button type="submit" className={styles.buttonSubmit}>
+            Add Item
+          </button>
+        </div>
       </div>
     </form>
   );

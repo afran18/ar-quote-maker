@@ -19,6 +19,11 @@ function QuoteFormPage() {
     sqft: 0,
     totalSqft: 0,
     amount: 0,
+    date: new Date().toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
   });
 
   const [items, setItems] = useState([]);
@@ -37,6 +42,7 @@ function QuoteFormPage() {
       sqft,
       totalSqft,
       amount,
+      date: prev.date,
     }));
   }, [
     quoteForm.height,

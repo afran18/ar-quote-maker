@@ -90,6 +90,11 @@
   background-color: #2b5d97;
 }
 
+.dateAndButtonsRow{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 /* Optional: Make form content more compact on small screens */
 @media (max-width: 600px) {
   .calculationRow {
