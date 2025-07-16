@@ -7,17 +7,22 @@ function QuoteDetails({ customer, items }) {
     0
   );
 
-  console.log(items);
-  
+  console.log(customer);
 
   return (
     <div className={styles.quoteItems}>
-      <h2>Customer Info</h2>
-      
-      <p>Name: {customer.customerName}</p>
-      <p>Phone: {customer.customerPhone}</p>
-      <p>Email: {customer.customerEmail}</p>
-      <p>Address: {customer.customerAddress}</p>
+      <div className={styles.quoteHeader}>
+          <h2>AR Arts</h2>
+        <div className={styles.customerDetailsTop}>
+          <p>Name: {customer.customerName}</p>
+          <p>Date: {customer.date}</p>
+        </div>
+        <div className={styles.phoneMailRow}>
+          <p>Phone: {customer.customerPhone}</p>
+          <p>Email: {customer.customerEmail}</p>
+        </div>
+        <p>Address: {customer.customerAddress}</p>
+      </div>
 
       <table className={styles.quoteTable}>
         <thead>

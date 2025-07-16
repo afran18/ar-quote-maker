@@ -1,7 +1,7 @@
 import CustomInput from "./CustomInput";
 import styles from "./QuoteForm.module.css";
 
-function QuoteForm({ form, onChange, onAddItem }) {
+function QuoteForm({ form, onChange, onAddItem, customer }) {
   return (
     <form onSubmit={onAddItem} className={styles.quoteForm}>
       <div className={styles.formItem}>
@@ -69,11 +69,7 @@ function QuoteForm({ form, onChange, onAddItem }) {
       </div>
       <div className={styles.dateAndButtonsRow}>
         <h3>
-          Date: {new Date().toLocaleDateString("en-IN", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          })}
+          Date: {customer.date || "N/A"}
         </h3>
         <div className={styles.buttonGroup}>
           <button type="reset" className={styles.buttonReset}>

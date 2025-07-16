@@ -20,7 +20,13 @@ function CustomerDetailsPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/quote", { state: customerForm });
+
+    const quoteDate = new Date().toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+    navigate("/quote", { state: {...customerForm, date: quoteDate}});
   };
 
   return (

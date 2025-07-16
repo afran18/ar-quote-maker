@@ -1,57 +1,93 @@
+.quoteHeader {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    border-bottom: 3px solid #3674b5;
+}
+
+.quoteHeader h2 {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.customerDetailsTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.phoneMailRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
 .quoteItems {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 1000px;
-  margin: 0 auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* background-color: #ffffff; */
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 1000px;
+    margin: 0 auto;
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
 }
 
 .quoteItems h2 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  color: #521010;
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
 }
 
 .quoteItems p {
-  margin: 4px 0;
-  font-size: 0.95rem;
-  color: #444;
+    margin: 4px 0;
+    font-size: 0.95rem;
+    color: #444;
 }
 
 /* Table styles */
 table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.9rem;
 }
 
 thead {
-  background-color: #f2f2f2;
+    background-color: #3674b5;
+    color: #ffffff;
 }
 
 th,
 td {
-  padding: 10px 12px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-  font-size: 0.95rem;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 0.95rem;
 }
 
 td:last-child,
 th:last-child {
-  text-align: right;
+    text-align: right;
 }
 
-tr:hover {
-  background-color: #f9f9f9;
+/* Alternating row colors */
+tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #e2f0ff; 
+}
+
+tbody tr:hover {
+    background-color: #e2f0ff; 
 }
 
 /* Total Amount styling */
 .totalAmount {
-  margin-top: 20px;
-  font-weight: bold;
-  font-size: 1.2rem;
-  text-align: right;
-  color: #222;
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: right;
+    color: #222;
 }
