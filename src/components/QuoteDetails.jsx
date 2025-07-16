@@ -12,7 +12,15 @@ function QuoteDetails({ customer, items }) {
   return (
     <div className={styles.quoteItems}>
       <div className={styles.quoteHeader}>
-          <h2>AR Arts</h2>
+        <div className={styles.ownerDetails}>
+          <div className={styles.ownerDetailsLeft}>
+            <h2>AR Arts</h2>
+          </div>
+          <div className={styles.ownerDetailsRight}>
+            <p>Mobile: +91 97316 16450</p>
+            <p>Email: rdavalbhai@gmail.com</p>
+          </div>
+        </div>
         <div className={styles.customerDetailsTop}>
           <p>Name: {customer.customerName}</p>
           <p>Date: {customer.date}</p>
@@ -24,6 +32,7 @@ function QuoteDetails({ customer, items }) {
         <p>Address: {customer.customerAddress}</p>
       </div>
 
+      <div className={styles.contentWrapper}>
       <table className={styles.quoteTable}>
         <thead>
           <tr>
@@ -56,15 +65,24 @@ function QuoteDetails({ customer, items }) {
           ))}
         </tbody>
       </table>
-
-      <div className={styles.totalAmount}>
-        Total Amount:{" "}
-        {totalAmount.toLocaleString("en-IN", {
-          style: "currency",
-          currency: "INR",
-          minimumFractionDigits: 2,
-        })}
       </div>
+
+      <footer className={styles.quoteFooter}>
+        <div className={styles.signature}>
+          <p>Signature</p>
+          <div style={{ height: "30px" }}></div>
+          <p>_________________________</p>
+        </div>
+
+        <div className={styles.totalAmount}>
+          Total Amount:{" "}
+          {totalAmount.toLocaleString("en-IN", {
+            style: "currency",
+            currency: "INR",
+            minimumFractionDigits: 2,
+          })}
+        </div>
+      </footer>
     </div>
   );
 }

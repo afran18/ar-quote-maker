@@ -6,10 +6,17 @@
     border-bottom: 3px solid #3674b5;
 }
 
-.quoteHeader h2 {
-    font-size: 1.5rem;
-    color: #333;
+.ownerDetails {
+    display: flex;
+    justify-content: space-between;
 }
+.ownerDetailsLeft h2 {
+    font-size: 2.5rem;
+    color: #3674b5;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
 
 .customerDetailsTop {
     display: flex;
@@ -23,20 +30,21 @@
     align-items: flex-start;
 }
 
-.quoteItems {
-    /* background-color: #ffffff; */
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 1000px;
-    margin: 0 auto;
-    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
+.contentWrapper {
+  flex-grow: 1;
 }
 
-.quoteItems h2 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #333;
+.quoteItems {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 1000px;
+  margin: 0 auto;
+  min-height: 100%; /* Ensures full height when parent allows */
 }
+
+
 
 .quoteItems p {
     margin: 4px 0;
@@ -85,9 +93,20 @@ tbody tr:hover {
 
 /* Total Amount styling */
 .totalAmount {
-    margin-top: 20px;
     font-weight: bold;
     font-size: 1.2rem;
     text-align: right;
     color: #222;
+}
+
+.quoteFooter {
+    margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* align from top */
+}
+
+.signature {
+    font-weight: bold;
+    font-size: 1.2rem;
 }
