@@ -1,7 +1,7 @@
 import CustomInput from "./CustomInput";
 import styles from "./QuoteForm.module.css";
 
-function QuoteForm({ form, onChange, onAddItem, customer }) {
+function QuoteForm({ form, onChange, onAddItem }) {
   return (
     <form onSubmit={onAddItem} className={styles.quoteForm}>
       <div className={styles.formItem}>
@@ -69,7 +69,7 @@ function QuoteForm({ form, onChange, onAddItem, customer }) {
       </div>
       <div className={styles.dateAndButtonsRow}>
         <h3>
-          Date: {customer.date || "N/A"}
+          {/* Date: {customer.date || "N/A"} */}
         </h3>
         <div className={styles.buttonGroup}>
           <button type="reset" className={styles.buttonReset}>

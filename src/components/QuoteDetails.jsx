@@ -1,13 +1,14 @@
 import React from "react";
 import styles from "./QuoteDetails.module.css";
+import { useQuote } from "../context/useQuote";
 
-function QuoteDetails({ customer, items }) {
+function QuoteDetails({ items }) {
+
+  const { customer, quoteItems } = useQuote();
   const totalAmount = items.reduce(
     (sum, item) => sum + parseFloat(item.amount || 0),
     0
   );
-
-  console.log(customer);
 
   return (
     <div className={styles.quoteItems}>
@@ -22,14 +23,14 @@ function QuoteDetails({ customer, items }) {
           </div>
         </div>
         <div className={styles.customerDetailsTop}>
-          <p>Name: {customer.customerName}</p>
-          <p>Date: {customer.date}</p>
+          {customer?.name && <p>Name: {customer.name}</p>}
+          {customer?.date && <p>Date: {customer.date}</p>}
         </div>
         <div className={styles.phoneMailRow}>
-          <p>Phone: {customer.customerPhone}</p>
-          <p>Email: {customer.customerEmail}</p>
+          {customer?.phone && <p>Phone: {customer.phone}</p>}
+          {customer?.email && <p>Email: {customer.email}</p>}
         </div>
-        <p>Address: {customer.customerAddress}</p>
+        {customer?.address && <p>Address: {customer.address}</p>}
       </div>
 
       <div className={styles.contentWrapper}>
@@ -46,7 +47,7 @@ function QuoteDetails({ customer, items }) {
           </tr>
         </thead>
         <tbody>
-          {items.map((item, idx) => (
+          {quoteItems.map((item, idx) => (
             <tr key={idx}>
               <td>{idx + 1}</td>
               <td>{item.itemDescription}</td>
@@ -71,7 +72,7 @@ function QuoteDetails({ customer, items }) {
         <div className={styles.signature}>
           <p>Signature</p>
           <div style={{ height: "30px" }}></div>
-          <p>_________________________</p>
+          <p>_________________</p>
         </div>
 
         <div className={styles.totalAmount}>

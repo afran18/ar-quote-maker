@@ -1,14 +1,12 @@
-import { useLocation } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import QuoteDetails from "../components/QuoteDetails";
 import QuoteForm from "../components/QuoteForm";
 import { calcSqft, calcTotalSqft, calcAmount } from "../utils/calcUtils";
-
 import styles from "./QuoteFormPage.module.css";
+import { useQuote } from "../context/useQuote";
 
 function QuoteFormPage() {
-  const location = useLocation();
-  const customer = location.state || {};
+  const { addItemToQuote, quoteItems } = useQuote();
 
   const [quoteForm, setQuoteForm] = useState({
     itemDescription: "",
@@ -20,8 +18,6 @@ function QuoteFormPage() {
     totalSqft: 0,
     amount: 0,
   });
-
-  const [items, setItems] = useState([]);
 
   const handleChange = (e) => {
     setQuoteForm({ ...quoteForm, [e.target.name]: e.target.value });
@@ -47,35 +43,37 @@ function QuoteFormPage() {
 
   const handleAddItem = (e) => {
     e.preventDefault();
-    setItems([...items, quoteForm]);
+
+    addItemToQuote({ ...quoteForm });
+    console.log(quoteItems);
+    
+
     setQuoteForm({
       itemDescription: "",
       height: "",
       width: "",
       quantity: 1,
-      ratePerSqft: "",
-      sqft: "",
-      totalSqft: "",
-      amount: "",
+      ratePerSqft: 0,
+      sqft: 0,
+      totalSqft: 0,
+      amount: 0,
     });
   };
 
   return (
-    <>
-      <div className={styles.container}>
-        <div className={styles.formSection}>
-          <QuoteForm
-            form={quoteForm}
-            onChange={handleChange}
-            onAddItem={handleAddItem}
-            customer={customer}
-          />
-        </div>
-        <div className={styles.detailsSection}>
-          <QuoteDetails customer={customer} items={items} />
-        </div>
+    <div className={styles.container}>
+      <div className={styles.formSection}>
+        <QuoteForm
+          form={quoteForm}
+          onChange={handleChange}
+          onAddItem={handleAddItem}
+        />
       </div>
-    </>
+      <div className={styles.detailsSection}>
+        <QuoteDetails items={quoteItems} />
+      </div>
+    </div>
   );
 }
+
 export default QuoteFormPage;

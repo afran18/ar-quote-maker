@@ -78,7 +78,6 @@ th:last-child {
     text-align: right;
 }
 
-/* Alternating row colors */
 tbody tr:nth-child(odd) {
     background-color: #ffffff;
 }
