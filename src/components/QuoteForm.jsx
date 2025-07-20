@@ -1,7 +1,7 @@
 import CustomInput from "./CustomInput";
 import styles from "./QuoteForm.module.css";
 
-function QuoteForm({ form, onChange, onAddItem }) {
+function QuoteForm({ form, onChange, onAddItem, resetForm,errors }) {
   return (
     <form onSubmit={onAddItem} className={styles.quoteForm}>
       <div className={styles.formItem}>
@@ -13,6 +13,7 @@ function QuoteForm({ form, onChange, onAddItem }) {
           value={form.itemDescription}
           onChange={onChange}
           className={styles.form}
+          error={errors.itemDescription}
         />
       </div>
 
@@ -24,6 +25,7 @@ function QuoteForm({ form, onChange, onAddItem }) {
           id="height"
           value={form.height}
           onChange={onChange}
+          error={errors.height}
         />
         <CustomInput
           label="Width"
@@ -32,6 +34,7 @@ function QuoteForm({ form, onChange, onAddItem }) {
           id="width"
           value={form.width}
           onChange={onChange}
+          error={errors.width}
         />
       </div>
       <div className={styles.formItemGroup}>
@@ -42,6 +45,7 @@ function QuoteForm({ form, onChange, onAddItem }) {
           id="quantity"
           value={form.quantity}
           onChange={onChange}
+          error={errors.quantity}
         />
         <CustomInput
           label="Rate per sqft"
@@ -50,6 +54,7 @@ function QuoteForm({ form, onChange, onAddItem }) {
           id="ratePerSqft"
           value={form.ratePerSqft}
           onChange={onChange}
+          error={errors.ratePerSqft}
         />
       </div>
 
@@ -72,7 +77,7 @@ function QuoteForm({ form, onChange, onAddItem }) {
           {/* Date: {customer.date || "N/A"} */}
         </h3>
         <div className={styles.buttonGroup}>
-          <button type="reset" className={styles.buttonReset}>
+          <button type="reset" className={styles.buttonReset} onClick={resetForm}>
             Reset
           </button>
           <button type="submit" className={styles.buttonSubmit}>

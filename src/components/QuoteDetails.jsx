@@ -3,7 +3,6 @@ import styles from "./QuoteDetails.module.css";
 import { useQuote } from "../context/useQuote";
 
 function QuoteDetails({ items }) {
-
   const { customer, quoteItems } = useQuote();
   const totalAmount = items.reduce(
     (sum, item) => sum + parseFloat(item.amount || 0),
@@ -34,38 +33,38 @@ function QuoteDetails({ items }) {
       </div>
 
       <div className={styles.contentWrapper}>
-      <table className={styles.quoteTable}>
-        <thead>
-          <tr>
-            <th>Sl No</th>
-            <th>Description</th>
-            <th>Height (ft)</th>
-            <th>Width (ft)</th>
-            <th>Qty</th>
-            <th>SqFt</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {quoteItems.map((item, idx) => (
-            <tr key={idx}>
-              <td>{idx + 1}</td>
-              <td>{item.itemDescription}</td>
-              <td>{item.height}</td>
-              <td>{item.width}</td>
-              <td>{item.quantity}</td>
-              <td>{item.totalSqft}</td>
-              <td>
-                {parseFloat(item.amount || 0).toLocaleString("en-IN", {
-                  style: "currency",
-                  currency: "INR",
-                  minimumFractionDigits: 2,
-                })}
-              </td>
+        <table className={styles.quoteTable}>
+          <thead>
+            <tr>
+              <th>Sl No</th>
+              <th>Description</th>
+              <th>Height (ft)</th>
+              <th>Width (ft)</th>
+              <th>Qty</th>
+              <th>SqFt</th>
+              <th>Amount</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {quoteItems.map((item, idx) => (
+              <tr key={idx}>
+                <td>{idx + 1}</td>
+                <td>{item.itemDescription}</td>
+                <td>{item.height}</td>
+                <td>{item.width}</td>
+                <td>{item.quantity}</td>
+                <td>{item.totalSqft}</td>
+                <td>
+                  {parseFloat(item.amount || 0).toLocaleString("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                    minimumFractionDigits: 2,
+                  })}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <footer className={styles.quoteFooter}>
@@ -75,13 +74,16 @@ function QuoteDetails({ items }) {
           <p>_________________</p>
         </div>
 
-        <div className={styles.totalAmount}>
-          Total Amount:{" "}
-          {totalAmount.toLocaleString("en-IN", {
-            style: "currency",
-            currency: "INR",
-            minimumFractionDigits: 2,
-          })}
+        <div className={styles.totalAmountWrapper}>
+          <div className={styles.totalAmount}>
+            Total Amount:{" "}
+            {totalAmount.toLocaleString("en-IN", {
+              style: "currency",
+              currency: "INR",
+              minimumFractionDigits: 2,
+            })}
+          </div>
+            <button className={styles.printBtn}>Print Quote</button>
         </div>
       </footer>
     </div>

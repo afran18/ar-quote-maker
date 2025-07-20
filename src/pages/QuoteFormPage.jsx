@@ -19,8 +19,41 @@ function QuoteFormPage() {
     amount: 0,
   });
 
+  const [errors, setErrors] = useState({
+    itemDescription: false,
+    height: false,
+    width: false,
+    quantity: false,
+    ratePerSqft: false,
+  });
+
+  const resetForm = () => {
+    setQuoteForm({
+      itemDescription: "",
+      height: "",
+      width: "",
+      quantity: 1,
+      ratePerSqft: 0,
+      sqft: 0,
+      totalSqft: 0,
+      amount: 0,
+    });
+    setErrors({
+      itemDescription: false,
+      height: false,
+      width: false,
+      quantity: false,
+      ratePerSqft: false,
+    });
+  }
+
   const handleChange = (e) => {
-    setQuoteForm({ ...quoteForm, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setQuoteForm((prev) => ({...prev, [name] : value}));
+
+    if(value.trim() !== "") {
+      setErrors((prev) => ({...prev, [name] : false}));
+    }
   };
 
   useEffect(() => {
@@ -43,6 +76,19 @@ function QuoteFormPage() {
 
   const handleAddItem = (e) => {
     e.preventDefault();
+
+    const newErrors = {
+      itemDescription: quoteForm.itemDescription.trim() === '',
+      height: quoteForm.height.trim() === '',
+      width: quoteForm.width.trim() === '',
+      quantity: quoteForm.quantity <= 0,
+      ratePerSqft: quoteForm.ratePerSqft <= 0,
+    }
+
+    setErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some(error => error);
+    if (hasErrors) return;
 
     addItemToQuote({ ...quoteForm });
     console.log(quoteItems);
@@ -67,6 +113,8 @@ function QuoteFormPage() {
           form={quoteForm}
           onChange={handleChange}
           onAddItem={handleAddItem}
+          resetForm = {resetForm}
+          errors={errors}
         />
       </div>
       <div className={styles.detailsSection}>

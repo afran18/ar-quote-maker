@@ -6,7 +6,7 @@ import { useQuote } from "../context/useQuote";
 
 function CustomerDetailsPage() {
   const navigate = useNavigate();
-  const { customer, updateCustomer } = useQuote();
+  const {  updateCustomer } = useQuote();
 
   const [customerForm, setCustomerForm] = useState({
     name: "",
@@ -85,7 +85,7 @@ function CustomerDetailsPage() {
             value={customerForm.email}
             onChange={handleChange}
             className={styles.form}
-            error
+            error = {errors.email}
           />
         </div>
         <div className={styles.formItem}>
