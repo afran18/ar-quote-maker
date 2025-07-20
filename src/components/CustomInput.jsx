@@ -1,6 +1,9 @@
 import React from "react";
 import styles from "./CustomInput.module.css";
 
+
+
+
 function CustomInput({
   label,
   type = "text",
@@ -10,10 +13,13 @@ function CustomInput({
   onChange,
   required = false,
   className = "",
+  error = false,
 }) {
   return (
     <div className={`${styles.inputGroup} ${className}`}>
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id} className={error ? styles.errorLabel : ""}>
+        {label}
+      </label>
       <input
         type={type}
         name={name}
@@ -21,6 +27,7 @@ function CustomInput({
         value={value}
         required={required}
         onChange={onChange}
+        className={error ? styles.errorInput : ""}
       />
     </div>
   );

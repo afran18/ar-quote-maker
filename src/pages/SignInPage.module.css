@@ -29,3 +29,9 @@
 .buttonSignin:hover {
   background-color: #2b5d97;
 }
+
+.invalidCreds {
+  color: red;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}

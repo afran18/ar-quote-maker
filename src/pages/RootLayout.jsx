@@ -1,5 +1,6 @@
 import { Outlet, NavLink, useLocation } from "react-router-dom";
 import styles from "./RootLayout.module.css";
+import { logout } from "../utils/auth"; 
 
 function RootLayout() {
   const location = useLocation();
@@ -14,7 +15,7 @@ function RootLayout() {
         {!isSignInPage && (
           <nav className={styles.navBarLeft}>
             <NavLink to="/view-quotes">View Quotes</NavLink>
-            <NavLink to="/">Sign Out</NavLink>
+            <NavLink to="/" onClick={logout}>Sign Out</NavLink>
           </nav>
         )}
       </header>

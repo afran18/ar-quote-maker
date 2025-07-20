@@ -15,35 +15,50 @@ function CustomerDetailsPage() {
     address: "",
   });
 
+  const [errors, setErrors] = useState({
+    name: false,
+    email: false,
+    phone: false,
+    address: false,
+  });
+
   const handleChange = (e) => {
-    setCustomerForm({
-      ...customerForm,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setCustomerForm((prev) => ({ ...prev, [name]: value }));
+
+    if (value.trim() !== "") {
+      setErrors((prev) => ({ ...prev, [name]: false }));
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-    const quoteDate = new Date().toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-
-    // Save to context
-    updateCustomer({
-      ...customerForm,
-      date: quoteDate,
-    });
-    console.log("Customer details updated:", customerForm);
-    console.log("Customer from context", customer);
-    
-    
-
-    // Navigate to next page
-    navigate("/quote");
+  const newErrors = {
+    name: customerForm.name.trim() === '',
+    email: customerForm.email.trim() === '',
+    phone: customerForm.phone.trim() === '',
+    address: customerForm.address.trim() === '',
   };
+
+  setErrors(newErrors);
+
+  const hasErrors = Object.values(newErrors).some(Boolean);
+  if (hasErrors) return;
+
+  const quoteDate = new Date().toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  updateCustomer({
+    ...customerForm,
+    date: quoteDate,
+  });
+
+  navigate("/quote");
+};
 
   return (
     <div className={styles.container}>
@@ -58,6 +73,7 @@ function CustomerDetailsPage() {
             value={customerForm.name}
             onChange={handleChange}
             className={styles.form}
+            error={errors.name}
           />
         </div>
         <div className={styles.formItem}>
@@ -69,6 +85,7 @@ function CustomerDetailsPage() {
             value={customerForm.email}
             onChange={handleChange}
             className={styles.form}
+            error
           />
         </div>
         <div className={styles.formItem}>
@@ -80,6 +97,7 @@ function CustomerDetailsPage() {
             value={customerForm.phone}
             onChange={handleChange}
             className={styles.form}
+            error={errors.phone}
           />
         </div>
         <div className={styles.formItem}>
@@ -91,6 +109,7 @@ function CustomerDetailsPage() {
             value={customerForm.address}
             onChange={handleChange}
             className={styles.form}
+            error={errors.address}
           />
         </div>
 

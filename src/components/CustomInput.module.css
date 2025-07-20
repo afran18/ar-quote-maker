@@ -22,3 +22,21 @@ input:focus {
   border-color: #3674B5;
   outline: none;
 }
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.errorLabel {
+  color: red;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.errorInput {
+  border: 1px solid red;
+  background-color: #ffe6e6;
+}
+
