@@ -5,6 +5,7 @@ import QuoteFormPage from "./pages/QuoteFormPage";
 import ViewQuotes from "./pages/ViewQuotesPage";
 import SignIn from "./pages/SignInPage";
 import { DUMMY_CREDENTIALS } from "./utils/auth";
+import QuotePdfDocument from "./components/QuotePdfDocument";
 
 
 
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
       { path: "view-quotes", loader: requireAuth, element: <ViewQuotes /> },
       { path: "customer", loader: requireAuth, element: <CustomerDetailsPage /> },
       { path: "quote", loader: requireAuth, element: <QuoteFormPage /> },
+      {path: "pdf", element: <QuotePdfDocument />}
     ],
   },
 ]);

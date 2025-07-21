@@ -1,6 +1,8 @@
 import React from "react";
 import styles from "./QuoteDetails.module.css";
 import { useQuote } from "../context/useQuote";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import QuotePdfDocument from "./QuotePdfDocument"; // Import the dummy PDF document
 
 function QuoteDetails({ items }) {
   const { customer, quoteItems } = useQuote();
@@ -83,7 +85,19 @@ function QuoteDetails({ items }) {
               minimumFractionDigits: 2,
             })}
           </div>
-            <button className={styles.printBtn}>Print Quote</button>
+            {/* Button to print pdf*/}
+          <PDFDownloadLink
+            document={<QuotePdfDocument customer={customer} quoteItems={quoteItems} />} 
+            fileName="quote.pdf" 
+          >
+            {({ blob, url, loading, error }) =>
+              loading ? (
+                <button className={styles.printBtn} disabled>Generating PDF...</button>
+              ) : (
+                <button className={styles.printBtn}>Download Quote</button>
+              )
+            }
+          </PDFDownloadLink>
         </div>
       </footer>
     </div>
