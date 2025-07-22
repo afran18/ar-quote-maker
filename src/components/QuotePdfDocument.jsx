@@ -2,26 +2,25 @@ import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 
 
+// Create styles for your PDF document
 const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
-    backgroundColor: '#FFFFFF', 
-    padding: 40, 
-    fontFamily: 'Helvetica', 
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+    fontFamily: 'Helvetica',
   },
   headerSection: {
     backgroundColor: '#3674B5',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    width: 595.28,
-    marginTop: -40,
-    marginLeft: -40, // Pull it left by page padding
-    marginRight: -40, // Pull it right by page padding
-    paddingHorizontal: 40, // Apply internal horizontal padding for content alignment
-    paddingVertical: 15, // Maintain internal vertical spacing
+    width: '100%',
+    paddingHorizontal: 30,
+    paddingVertical: 12,
+    borderTopWidth: 5,
+    borderTopColor: '#004fa4',
+    marginBottom: 20,
   },
   ownerDetailsLeft: {
     // flexGrow: 1, // Can be used if you want it to take more space
@@ -33,23 +32,28 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 5,
     color: '#fdfdfd',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    fontStyle: 'italic',
   },
   ownerAddress: {
-    borderTopWidth: '2px',
+    borderTopWidth: 2,
     borderTopColor: "#FFF",
     paddingTop: 10,
-    fontSize: 14,
+    fontSize: 12,
+    fontWeight: 'bold',
     marginBottom: 5,
     color: '#fdfdfd',
   },
-  
   ownerText: {
-    fontSize: 12,
+    fontSize: 10,
+    fontWeight: 'bold',
     color: '#fdfdfd',
+    marginBottom: 2,
   },
   customerDetails: {
+    marginBottom: 20,
     paddingBottom: 10,
+    paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
@@ -58,68 +62,68 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   customerLabel: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: 'bold',
-    width: 60, // Fixed width for labels to align values
-    color: '#555',
+    color: '#3674B5',
+    marginRight: 5,
   },
   customerValue: {
-    fontSize: 10,
+    fontSize: 12,
     flex: 1,
-    color: '#666',
+    color: '#444',
   },
   table: {
     display: 'table',
     width: 'auto',
     marginBottom: 20,
     borderStyle: 'solid',
-    borderColor: '#bfbfbf',
-    borderWidth: 1,
+    borderColor: '#FFFFFF', 
+    borderWidth: 1, 
     borderRightWidth: 0,
-    borderBottomWidth: 0,
+    borderBottomWidth: 0, 
+    paddingHorizontal: 10
   },
   tableRow: {
     flexDirection: 'row',
   },
   tableColHeader: {
-    width: '14.28%', // 100 / 7 columns
+    width: '10%',
     borderStyle: 'solid',
-    borderColor: '#bfbfbf',
-    borderBottomColor: '#000',
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-    backgroundColor: '#f0f0f0',
+    borderColor: '#FFFFFF', 
+    borderRightWidth: 1, 
+    borderBottomWidth: 1, 
+    backgroundColor: '#3674B5',
+    fontWeight: 'bold',
   },
   tableCol: {
-    width: '14.28%', // 100 / 7 columns
+    width: '10%',
     borderStyle: 'solid',
-    borderColor: '#bfbfbf',
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
+    borderColor: '#FFFFFF', 
+    borderRightWidth: 1, 
+    borderBottomWidth: 1,
   },
   tableColDescription: {
-    width: '28.56%', // For description column (e.g., 2/7 of width)
+    width: '50%',
     borderStyle: 'solid',
-    borderColor: '#bfbfbf',
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
+    borderColor: '#FFFFFF', 
+    borderRightWidth: 1, 
+    borderBottomWidth: 1,
+    backgroundColor: '#3674B5',
+    fontWeight: 'bold',
   },
   tableCellHeader: {
     margin: 5,
     fontSize: 9,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#ffffff', 
   },
   tableCell: {
     margin: 5,
     fontSize: 8,
-    color: '#444',
+    color: '#444', 
   },
   footerSection: {
-    marginTop: 'auto', // Pushes footer to the bottom
+    marginTop: 'auto',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
@@ -135,7 +139,7 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   totalAmountWrapper: {
-    alignSelf: 'flex-end', // Aligns to the right within the footer
+    alignSelf: 'flex-end',
   },
   totalAmountText: {
     fontSize: 14,
@@ -153,9 +157,7 @@ const styles = StyleSheet.create({
   },
 });
 
-// QuotePdfDocument now accepts 'customer' and 'quoteItems' as props
 const QuotePdfDocument = ({ customer, quoteItems }) => {
-  // Calculate total amount dynamically based on passed quoteItems
   const totalAmount = quoteItems.reduce(
     (sum, item) => sum + parseFloat(item.amount || 0),
     0
@@ -164,11 +166,12 @@ const QuotePdfDocument = ({ customer, quoteItems }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Header Section (Owner Details - Static as per your original component) */}
+        {/* Header Section (Owner Details) */}
         <View style={styles.headerSection}>
           <View style={styles.ownerDetailsLeft}>
             <Text style={styles.ownerHeading}>Adithya Sign Associates</Text>
             <Text style={styles.ownerAddress}>Plot No. 316, 4th Cross, Auto Nagar, KIADB, Belagavi - 16</Text>
+            <Text style={styles.ownerText}>GST No: 29AYYPD1111DIZN (Comp)</Text>
           </View>
           <View style={styles.ownerDetailsRight}>
             <Text style={styles.ownerText}>Mobile: +91 97316 16450</Text>
@@ -176,37 +179,40 @@ const QuotePdfDocument = ({ customer, quoteItems }) => {
           </View>
         </View>
 
-        {/* Customer Details - Dynamic */}
+        {/* Customer Details Section */}
         <View style={styles.customerDetails}>
-          {customer?.name && (
-            <View style={styles.customerRow}>
-              <Text style={styles.customerLabel}>Name:</Text>
-              <Text style={styles.customerValue}>{customer.name}</Text>
-            </View>
-          )}
-          {customer?.date && (
-            <View style={styles.customerRow}>
-              <Text style={styles.customerLabel}>Date:</Text>
-              <Text style={styles.customerValue}>{customer.date}</Text>
-            </View>
-          )}
-          {/* Corrected structure for Phone and Email to avoid ' ' string child error */}
+          <View style={{ ...styles.customerRow, justifyContent: 'space-between' }}>
+            {customer?.name && (
+              <View style={{ flexDirection: 'row', flex: 1 }}>
+                <Text style={styles.customerLabel}>Name:</Text>
+                <Text style={styles.customerValue}>{customer.name}</Text>
+              </View>
+            )}
+            {customer?.date && (
+              <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'flex-end' }}>
+                <Text style={styles.customerLabel}>Date:</Text>
+                <Text style={styles.customerValue}>{customer.date}</Text>
+              </View>
+            )}
+          </View>
+
           {(customer?.phone || customer?.email) && (
             <View style={styles.customerRow}>
               {customer?.phone && (
-                <View style={{ flexDirection: 'row', marginRight: customer?.email ? 20 : 0 }}>
+                <View style={{ flexDirection: 'row', flex: 0.5 }}>
                   <Text style={styles.customerLabel}>Phone:</Text>
                   <Text style={styles.customerValue}>{customer.phone}</Text>
                 </View>
               )}
               {customer?.email && (
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'row', flex: 0.5, justifyContent: 'flex-end' }}>
                   <Text style={styles.customerLabel}>Email:</Text>
                   <Text style={styles.customerValue}>{customer.email}</Text>
                 </View>
               )}
             </View>
           )}
+
           {customer?.address && (
             <View style={styles.customerRow}>
               <Text style={styles.customerLabel}>Address:</Text>
@@ -215,10 +221,10 @@ const QuotePdfDocument = ({ customer, quoteItems }) => {
           )}
         </View>
 
-        {/* Quote Items Table - Dynamic */}
+        {/* Quote Items Table */}
         <View style={styles.table}>
           {/* Table Header */}
-          <View style={styles.tableRow} fixed> {/* 'fixed' makes header repeat on new pages */}
+          <View style={styles.tableRow} fixed> 
             <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>Sl No</Text>
             </View>
@@ -226,10 +232,7 @@ const QuotePdfDocument = ({ customer, quoteItems }) => {
               <Text style={styles.tableCellHeader}>Description</Text>
             </View>
             <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>Height (ft)</Text>
-            </View>
-            <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>Width (ft)</Text>
+              <Text style={styles.tableCellHeader}>Size (ft)</Text>
             </View>
             <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>Qty</Text>
@@ -242,20 +245,24 @@ const QuotePdfDocument = ({ customer, quoteItems }) => {
             </View>
           </View>
 
-          {/* Table Body - Dynamic Rows */}
+          {/* Table Body */}
           {quoteItems.map((item, idx) => (
-            <View style={styles.tableRow} key={idx} wrap={false}> {/* wrap={false} prevents row from breaking across pages */}
+            <View
+              style={{
+                ...styles.tableRow,
+                backgroundColor: idx % 2 === 0 ? '#FFFFFF' : '#e4f1fc', // Alternating white/light blue background
+              }}
+              key={idx}
+              wrap={false}
+            >
               <View style={styles.tableCol}>
                 <Text style={styles.tableCell}>{idx + 1}</Text>
               </View>
-              <View style={styles.tableColDescription}>
+              <View style={{ ...styles.tableCol, width: styles.tableColDescription.width }}>
                 <Text style={styles.tableCell}>{item.itemDescription}</Text>
               </View>
               <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>{item.height}</Text>
-              </View>
-              <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>{item.width}</Text>
+                <Text style={styles.tableCell}>{item.height} X {item.width}</Text>
               </View>
               <View style={styles.tableCol}>
                 <Text style={styles.tableCell}>{item.quantity}</Text>
@@ -276,7 +283,7 @@ const QuotePdfDocument = ({ customer, quoteItems }) => {
           ))}
         </View>
 
-        {/* Footer Section - Dynamic Total Amount */}
+        {/* Footer Section */}
         <View style={styles.footerSection}>
           <View style={styles.signatureSection}>
             <Text style={styles.signatureText}>Signature</Text>
@@ -286,7 +293,7 @@ const QuotePdfDocument = ({ customer, quoteItems }) => {
 
           <View style={styles.totalAmountWrapper}>
             <Text style={styles.totalAmountText}>
-              Total Amount:
+              Total Amount:{" "}
               {totalAmount.toLocaleString("en-IN", {
                 style: "currency",
                 currency: "INR",
