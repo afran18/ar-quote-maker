@@ -2,13 +2,37 @@ import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 
 
-// Create styles for your PDF document
+Font.register({
+  family: 'Noto Sans',
+  src: '/fonts/NotoSans-Regular.ttf', 
+});
+
+Font.register({
+  family: 'Noto Sans',
+  fontStyle: 'italic',
+  src: '/fonts/NotoSans-Italic.ttf', 
+});
+
+Font.register({
+  family: 'Noto Sans',
+  fontWeight: 'bold',
+  src: '/fonts/NotoSans-Bold.ttf', 
+});
+
+Font.register({
+  family: 'Noto Sans',
+  fontWeight: 'bold',
+  fontStyle: 'italic',
+  src: '/fonts/NotoSans-BoldItalic.ttf', 
+});
+
+
 const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
     backgroundColor: '#FFFFFF',
     padding: 10,
-    fontFamily: 'Helvetica',
+    fontFamily: 'Noto Sans',
   },
   headerSection: {
     backgroundColor: '#3674B5',
@@ -23,13 +47,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   ownerDetailsLeft: {
-    // flexGrow: 1, // Can be used if you want it to take more space
+    // flexGrow: 1,
   },
   ownerDetailsRight: {
     textAlign: 'right',
   },
   ownerHeading: {
-    fontSize: 24,
+    fontSize: 26, 
     marginBottom: 5,
     color: '#fdfdfd',
     fontWeight: 'bold',
@@ -76,52 +100,59 @@ const styles = StyleSheet.create({
     display: 'table',
     width: 'auto',
     marginBottom: 20,
-    borderStyle: 'solid',
-    borderColor: '#FFFFFF', 
-    borderWidth: 1, 
-    borderRightWidth: 0,
-    borderBottomWidth: 0, 
     paddingHorizontal: 10
   },
   tableRow: {
     flexDirection: 'row',
   },
-  tableColHeader: {
-    width: '10%',
+  // Common table column styling
+  tableColBase: {
     borderStyle: 'solid',
-    borderColor: '#FFFFFF', 
-    borderRightWidth: 1, 
-    borderBottomWidth: 1, 
+    borderColor: '#FFFFFF',
+    borderWidth: 1,
+    padding: 3, 
+  },
+  // Header specific column styling
+  tableColHeaderBase: {
     backgroundColor: '#3674B5',
     fontWeight: 'bold',
+    color: '#ffffff',
+    textAlign: 'center', 
   },
-  tableCol: {
-    width: '10%',
-    borderStyle: 'solid',
-    borderColor: '#FFFFFF', 
-    borderRightWidth: 1, 
-    borderBottomWidth: 1,
+  tableColHeaderDescription: {
+    textAlign: 'left', 
   },
-  tableColDescription: {
-    width: '50%',
-    borderStyle: 'solid',
-    borderColor: '#FFFFFF', 
-    borderRightWidth: 1, 
-    borderBottomWidth: 1,
-    backgroundColor: '#3674B5',
-    fontWeight: 'bold',
-  },
-  tableCellHeader: {
-    margin: 5,
-    fontSize: 9,
-    fontWeight: 'bold',
-    color: '#ffffff', 
-  },
-  tableCell: {
-    margin: 5,
-    fontSize: 8,
+  tableCellBase: {
+    fontSize: 12,
     color: '#444', 
+    textAlign: 'center', 
   },
+  tableCellDescription: {
+    textAlign: 'left', 
+  },
+
+  // Column Widths
+  colWidthSlNo: { width: '7%' },
+  colWidthDescription: { width: '36%' }, 
+  colWidthSize: { width: '12%' }, 
+  colWidthOther: { width: '9%' }, 
+  colWidthAmount: { width: '15%' }, 
+
+  tableCellHeader: {
+    fontSize: 12, 
+    fontWeight: 'bold',
+    color: '#ffffff',
+    margin: 5, 
+  },
+  rateSqftHeader: {
+    fontSize: 12
+  },
+  tableColHeaderRateSqFt: {
+    width: '12%',
+    paddingVertical: 2, 
+    paddingHorizontal: 0 
+  },
+  
   footerSection: {
     marginTop: 'auto',
     flexDirection: 'row',
@@ -156,6 +187,7 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
 });
+
 
 const QuotePdfDocument = ({ customer, quoteItems }) => {
   const totalAmount = quoteItems.reduce(
@@ -224,23 +256,26 @@ const QuotePdfDocument = ({ customer, quoteItems }) => {
         {/* Quote Items Table */}
         <View style={styles.table}>
           {/* Table Header */}
-          <View style={styles.tableRow} fixed> 
-            <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>Sl No</Text>
+          <View style={styles.tableRow} fixed>
+            <View style={[styles.tableColBase, styles.tableColHeaderBase, styles.colWidthSlNo]}>
+              <Text style={styles.tableCellHeader}>No</Text>
             </View>
-            <View style={styles.tableColDescription}>
+            <View style={[styles.tableColBase, styles.tableColHeaderBase, styles.tableColHeaderDescription, styles.colWidthDescription]}>
               <Text style={styles.tableCellHeader}>Description</Text>
             </View>
-            <View style={styles.tableColHeader}>
+            <View style={[styles.tableColBase, styles.tableColHeaderBase, styles.colWidthSize]}>
               <Text style={styles.tableCellHeader}>Size (ft)</Text>
             </View>
-            <View style={styles.tableColHeader}>
+            <View style={[styles.tableColBase, styles.tableColHeaderBase, styles.colWidthOther]}>
               <Text style={styles.tableCellHeader}>Qty</Text>
             </View>
-            <View style={styles.tableColHeader}>
+            <View style={[styles.tableColBase, styles.tableColHeaderBase, styles.colWidthOther]}>
               <Text style={styles.tableCellHeader}>SqFt</Text>
             </View>
-            <View style={styles.tableColHeader}>
+            <View style={[styles.tableColBase, styles.tableColHeaderBase, styles.tableColHeaderRateSqFt]}>
+              <Text style={[styles.tableCellHeader, styles.rateSqftHeader]}>Rate/SqFt</Text>
+            </View>
+            <View style={[styles.tableColBase, styles.tableColHeaderBase, styles.colWidthAmount]}>
               <Text style={styles.tableCellHeader}>Amount</Text>
             </View>
           </View>
@@ -250,31 +285,37 @@ const QuotePdfDocument = ({ customer, quoteItems }) => {
             <View
               style={{
                 ...styles.tableRow,
-                backgroundColor: idx % 2 === 0 ? '#FFFFFF' : '#e4f1fc', // Alternating white/light blue background
+                backgroundColor: idx % 2 === 0 ? '#FFFFFF' : '#e4f1fc',
               }}
               key={idx}
               wrap={false}
             >
-              <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>{idx + 1}</Text>
+              <View style={[styles.tableColBase, styles.tableCellBase, styles.colWidthSlNo]}>
+                <Text>{idx + 1}</Text>
               </View>
-              <View style={{ ...styles.tableCol, width: styles.tableColDescription.width }}>
-                <Text style={styles.tableCell}>{item.itemDescription}</Text>
+              <View style={[styles.tableColBase, styles.tableCellBase, styles.tableCellDescription, styles.colWidthDescription]}>
+                <Text>{item.itemDescription}</Text>
               </View>
-              <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>{item.height} X {item.width}</Text>
+              <View style={[styles.tableColBase, styles.tableCellBase, styles.colWidthSize]}>
+                <Text>{item.height} X {item.width}</Text>
               </View>
-              <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>{item.quantity}</Text>
+              <View style={[styles.tableColBase, styles.tableCellBase, styles.colWidthOther]}>
+                <Text>{item.quantity}</Text>
               </View>
-              <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>{item.totalSqft}</Text>
+              <View style={[styles.tableColBase, styles.tableCellBase, styles.colWidthOther]}>
+                <Text>{item.totalSqft}</Text>
               </View>
-              <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>
+              <View style={[styles.tableColBase, styles.tableCellBase, styles.tableColHeaderRateSqFt]}>
+                <Text>
+                  {parseFloat(item.ratePerSqft || 0).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                  })}
+                  
+                </Text>
+              </View>
+              <View style={[styles.tableColBase, styles.tableCellBase, styles.colWidthAmount]}>
+                <Text style={{textAlign: 'right'}}>
                   {parseFloat(item.amount || 0).toLocaleString("en-IN", {
-                    style: "currency",
-                    currency: "INR",
                     minimumFractionDigits: 2,
                   })}
                 </Text>
@@ -287,16 +328,14 @@ const QuotePdfDocument = ({ customer, quoteItems }) => {
         <View style={styles.footerSection}>
           <View style={styles.signatureSection}>
             <Text style={styles.signatureText}>Signature</Text>
-            <View style={{ height: 30 }}></View> {/* Spacer */}
+            <View style={{ height: 30 }}></View>
             <Text style={styles.signatureText}>_________________</Text>
           </View>
 
           <View style={styles.totalAmountWrapper}>
             <Text style={styles.totalAmountText}>
               Total Amount:{" "}
-              {totalAmount.toLocaleString("en-IN", {
-                style: "currency",
-                currency: "INR",
+              ₹{totalAmount.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
               })}
             </Text>
@@ -306,7 +345,7 @@ const QuotePdfDocument = ({ customer, quoteItems }) => {
         {/* Page Number */}
         <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
           `${pageNumber} / ${totalPages}`
-        )} fixed /> {/* 'fixed' makes page number appear on all pages */}
+        )} fixed />
 
       </Page>
     </Document>
