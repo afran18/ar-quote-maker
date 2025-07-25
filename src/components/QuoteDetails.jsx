@@ -4,12 +4,25 @@ import { useQuote } from "../context/useQuote";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import QuotePdfDocument from "./QuotePdfDocument"; // Import the dummy PDF document
 
-function QuoteDetails({ items }) {
-  const { customer, quoteItems } = useQuote();
-  const totalAmount = items.reduce(
+function QuoteDetails() {
+  const { customer, quoteItems, removeItemFromQuote } = useQuote();
+  const totalAmount = quoteItems.reduce(
     (sum, item) => sum + parseFloat(item.amount || 0),
     0
   );
+
+  const editHandler = (index) => {
+    console.log(quoteItems[index]);
+  }
+  const deleteHandler = (index) => {
+
+    if(window.confirm("Are you sure, you want to delete this item?")) {
+      // console.log(index);
+      removeItemFromQuote(index);
+      // console.log("Item Deleted");
+    }
+    
+  }
 
   return (
     <div className={styles.quoteItems}>
@@ -45,6 +58,7 @@ function QuoteDetails({ items }) {
               <th>Qty</th>
               <th>SqFt</th>
               <th>Amount</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -52,9 +66,9 @@ function QuoteDetails({ items }) {
               <tr key={idx}>
                 <td>{idx + 1}</td>
                 <td>{item.itemDescription}</td>
-                <td>{item.height}</td>
-                <td>{item.width}</td>
-                <td>{item.quantity}</td>
+                <td>{item.height || "-"}</td>
+                <td>{item.width || "-"}</td>
+                <td>{item.quantity || 1}</td>
                 <td>{item.totalSqft}</td>
                 <td>
                   {parseFloat(item.amount || 0).toLocaleString("en-IN", {
@@ -62,6 +76,14 @@ function QuoteDetails({ items }) {
                     currency: "INR",
                     minimumFractionDigits: 2,
                   })}
+                </td>
+                <td style={{display: "flex", flexDirection: "column"}}>
+                  <button className={styles.deleteBtn} onClick={() => editHandler(idx)}>
+                    Edit
+                  </button>
+                  <button className={styles.deleteBtn} onClick={() => deleteHandler(idx)}>
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
@@ -85,16 +107,21 @@ function QuoteDetails({ items }) {
               minimumFractionDigits: 2,
             })}
           </div>
-            {/* Button to print pdf*/}
+          {/* Button to print pdf*/}
           <PDFDownloadLink
-            document={<QuotePdfDocument customer={customer} quoteItems={quoteItems} />} 
-            fileName="quote.pdf" 
+            document={
+              <QuotePdfDocument customer={customer} quoteItems={quoteItems} />
+            }
+            fileName="quote.pdf"
           >
             {({ blob, url, loading, error }) =>
               loading ? (
-                <button className={styles.printBtn} disabled>Generating PDF...</button>
+                <button className={styles.printBtn} disabled>
+                  Generating PDF...
+                </button>
               ) : (
-                <button className={styles.printBtn}>Download Quote</button>
+                <button className={styles.printBtn} onClick={() => {console.log("prinintg pdf");
+                }}>Download Quote</button>
               )
             }
           </PDFDownloadLink>

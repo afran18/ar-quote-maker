@@ -94,6 +94,15 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.calculationItem input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: rgb(2, 121, 2); 
+  cursor: pointer;
+}
+
+
 /* Optional: Make form content more compact on small screens */
 @media (max-width: 600px) {
   .calculationRow {
@@ -105,3 +114,4 @@
     align-items: stretch;
   }
 }
+

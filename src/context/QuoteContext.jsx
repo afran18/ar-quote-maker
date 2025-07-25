@@ -23,9 +23,11 @@ export const QuoteProvider = ({ children }) => {
   };
 
   const removeItemFromQuote = (quoteItemId) => {
-    setQuoteItems((prevQuoteItems) =>
-      prevQuoteItems.filter((quoteItem) => quoteItem.id !== quoteItemId)
-    );
+    setQuoteItems((prevQuoteItems) => {
+      const updatedQuoteItems = [...prevQuoteItems];
+      updatedQuoteItems.splice(quoteItemId, 1);
+      return updatedQuoteItems;
+    });
   };
 
   const updateCustomer = (updatedCustomer) => {

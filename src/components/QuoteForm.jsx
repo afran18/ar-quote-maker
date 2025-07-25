@@ -1,7 +1,7 @@
 import CustomInput from "./CustomInput";
 import styles from "./QuoteForm.module.css";
 
-function QuoteForm({ form, onChange, onAddItem, resetForm,errors }) {
+function QuoteForm({ form, onChange, onAddItem, resetForm, errors }) {
   return (
     <form onSubmit={onAddItem} className={styles.quoteForm}>
       <div className={styles.formItem}>
@@ -71,13 +71,25 @@ function QuoteForm({ form, onChange, onAddItem, resetForm,errors }) {
           <h3>Amount</h3>
           <h3> {Number(form.amount).toFixed(2)}</h3>
         </div>
+        <div className={styles.calculationItem}>
+          <h3>Lumpsum Amount</h3>
+          <input
+            type="checkbox"
+            name="lumpsum"
+            id="lumpsum"
+            checked={form.lumpsum}
+            onChange={onChange}
+          />
+        </div>
       </div>
       <div className={styles.dateAndButtonsRow}>
-        <h3>
-          {/* Date: {customer.date || "N/A"} */}
-        </h3>
+        <h3>{/* Date: {customer.date || "N/A"} */}</h3>
         <div className={styles.buttonGroup}>
-          <button type="reset" className={styles.buttonReset} onClick={resetForm}>
+          <button
+            type="reset"
+            className={styles.buttonReset}
+            onClick={resetForm}
+          >
             Reset
           </button>
           <button type="submit" className={styles.buttonSubmit}>
