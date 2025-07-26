@@ -1,4 +1,6 @@
 import { createContext, useState } from "react";
+import {v4 as uuidv4} from "uuid";
+
 
 /* eslint-disable react-refresh/only-export-components */
 export const QuoteContext = createContext();
@@ -19,17 +21,17 @@ export const QuoteProvider = ({ children }) => {
   const [quoteItems, setQuoteItems] = useState([]);
 
   const addItemToQuote = (quoteItem) => {
-    setQuoteItems((prevQuoteItems) => [...prevQuoteItems, quoteItem]);
+    const itemWithId = {...quoteItem, id: uuidv4()}
+    setQuoteItems((prevQuoteItems) => [...prevQuoteItems, itemWithId]);
   };
 
   const removeItemFromQuote = (quoteItemId) => {
-    setQuoteItems((prevQuoteItems) => {
-      const updatedQuoteItems = [...prevQuoteItems];
-      updatedQuoteItems.splice(quoteItemId, 1);
-      return updatedQuoteItems;
-    });
+    setQuoteItems((prevQuoteItems) => 
+      prevQuoteItems.filter((item) => item.id !== quoteItemId)
+    );
   };
 
+  
   const updateCustomer = (updatedCustomer) => {
     setCustomer(updatedCustomer);
   };

@@ -1,8 +1,10 @@
 import React from "react";
 import styles from "./QuoteDetails.module.css";
 import { useQuote } from "../context/useQuote";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import QuotePdfDocument from "./QuotePdfDocument"; // Import the dummy PDF document
+import { pdf } from "@react-pdf/renderer";
+import QuotePdfDocument from "./QuotePdfDocument";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 function QuoteDetails() {
   const { customer, quoteItems, removeItemFromQuote } = useQuote();
@@ -11,18 +13,37 @@ function QuoteDetails() {
     0
   );
 
-  const editHandler = (index) => {
-    console.log(quoteItems[index]);
-  }
-  const deleteHandler = (index) => {
-
-    if(window.confirm("Are you sure, you want to delete this item?")) {
+  const editHandler = (id) => {
+    console.log(id);
+  };
+  const deleteHandler = (id) => {
+    if (window.confirm("Are you sure, you want to delete this item?")) {
       // console.log(index);
-      removeItemFromQuote(index);
+      console.log("Deleting it with id: ", id);
+      removeItemFromQuote(id);
       // console.log("Item Deleted");
     }
-    
-  }
+  };
+
+  const handleGeneratePdf = async () => {
+    if (quoteItems.length <= 0) {
+      alert("No items in quote");
+      return;
+    } else if (window.confirm("Do you want to save and download the PDF?")) {
+      console.log("Printing pdf");
+
+      const blob = await pdf(
+        <QuotePdfDocument customer={customer} quoteItems={quoteItems} />
+      ).toBlob();
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "quote.pdf";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+  };
 
   return (
     <div className={styles.quoteItems}>
@@ -62,70 +83,88 @@ function QuoteDetails() {
             </tr>
           </thead>
           <tbody>
-            {quoteItems.map((item, idx) => (
-              <tr key={idx}>
-                <td>{idx + 1}</td>
-                <td>{item.itemDescription}</td>
-                <td>{item.height || "-"}</td>
-                <td>{item.width || "-"}</td>
-                <td>{item.quantity || 1}</td>
-                <td>{item.totalSqft}</td>
-                <td>
-                  {parseFloat(item.amount || 0).toLocaleString("en-IN", {
-                    style: "currency",
-                    currency: "INR",
-                    minimumFractionDigits: 2,
-                  })}
-                </td>
-                <td style={{display: "flex", flexDirection: "column"}}>
-                  <button className={styles.deleteBtn} onClick={() => editHandler(idx)}>
-                    Edit
-                  </button>
-                  <button className={styles.deleteBtn} onClick={() => deleteHandler(idx)}>
-                    Delete
-                  </button>
+            {quoteItems.length > 0 &&
+              quoteItems.map((item, idx) => (
+                <tr key={item.id}>
+                  <td>{idx + 1}</td>
+                  <td>{item.itemDescription}</td>
+                  <td>{item.height || "-"}</td>
+                  <td>{item.width || "-"}</td>
+                  <td>{item.quantity || 1}</td>
+                  <td>{item.totalSqft}</td>
+                  <td>
+                    {parseFloat(item.amount || 0).toLocaleString("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                      minimumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "4px",
+                    }}
+                  >
+                    <button
+                      className={styles.iconBtn}
+                      style={{ backgroundColor: "#28a745" }}
+                      onClick={() => editHandler(item.id)}
+                    >
+                      <FontAwesomeIcon icon={faEdit} /> Edit
+                    </button>
+                    <button
+                      className={styles.iconBtn}
+                      style={{ backgroundColor: "#dc3545" }}
+                      onClick={() => deleteHandler(item.id)}
+                    >
+                      <FontAwesomeIcon icon={faTrash} /> Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+
+            {quoteItems.length === 0 && (
+              <tr>
+                <td colSpan="8" className={styles.noItemsRow}>
+                  No Items Added
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
 
       <footer className={styles.quoteFooter}>
-        <div className={styles.signature}>
-          <p>Signature</p>
-          <div style={{ height: "30px" }}></div>
-          <p>_________________</p>
+        <div className={styles.totalAmount}>
+          Total Amount:{" "}
+          {totalAmount.toLocaleString("en-IN", {
+            style: "currency",
+            currency: "INR",
+            minimumFractionDigits: 2,
+          })}
         </div>
-
-        <div className={styles.totalAmountWrapper}>
-          <div className={styles.totalAmount}>
-            Total Amount:{" "}
-            {totalAmount.toLocaleString("en-IN", {
-              style: "currency",
-              currency: "INR",
-              minimumFractionDigits: 2,
-            })}
-          </div>
-          {/* Button to print pdf*/}
-          <PDFDownloadLink
+        {/* Button to print pdf*/}
+        {/* <PDFDownloadLink
             document={
               <QuotePdfDocument customer={customer} quoteItems={quoteItems} />
             }
             fileName="quote.pdf"
           >
-            {({ blob, url, loading, error }) =>
+            {({ loading }) =>
               loading ? (
                 <button className={styles.printBtn} disabled>
                   Generating PDF...
                 </button>
               ) : (
-                <button className={styles.printBtn} onClick={() => {console.log("prinintg pdf");
-                }}>Download Quote</button>
+                <button className={styles.printBtn}>Download Quote</button>
               )
             }
-          </PDFDownloadLink>
-        </div>
+          </PDFDownloadLink> */}
+
+        <button className={styles.printBtn} onClick={handleGeneratePdf}>
+          Download Quote
+        </button>
       </footer>
     </div>
   );
