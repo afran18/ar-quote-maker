@@ -6,7 +6,7 @@ import styles from "./QuoteFormPage.module.css";
 import { useQuote } from "../context/useQuote";
 
 function QuoteFormPage() {
-  const { addItemToQuote, quoteItems } = useQuote();
+  const { addItemToQuote, quoteItems, removeItemFromQuote, updateItemInQuote } = useQuote();
 
   const [quoteForm, setQuoteForm] = useState({
     itemDescription: "",
@@ -27,6 +27,9 @@ function QuoteFormPage() {
     quantity: false,
     ratePerSqft: false,
   });
+
+  const [editingItem, setEditingItem] = useState(null);
+
 
   const resetForm = () => {
     setQuoteForm({
@@ -97,19 +100,14 @@ function QuoteFormPage() {
     const hasErrors = Object.values(newErrors).some((error) => error);
     if (hasErrors) return;
 
-    addItemToQuote({ ...quoteForm });
+    if (editingItem) {
+      updateItemInQuote({ ...quoteForm, id: editingItem });
+      setEditingItem(null);
+    } else {
+      addItemToQuote({ ...quoteForm });
+    }
 
-    setQuoteForm({
-      itemDescription: "",
-      height: "",
-      width: "",
-      quantity: 1,
-      ratePerSqft: 0,
-      sqft: 0,
-      totalSqft: 0,
-      amount: 0,
-      lumpsum: false
-    });
+    resetForm();
   };
 
   useEffect(() => {
@@ -125,10 +123,19 @@ function QuoteFormPage() {
           onAddItem={handleAddItem}
           resetForm={resetForm}
           errors={errors}
+          isEditing={Boolean(editingItem)}
         />
       </div>
       <div className={styles.detailsSection}>
-        <QuoteDetails items={quoteItems} />
+        <QuoteDetails
+          items={quoteItems}
+          onEditItem={(item) => {
+            setQuoteForm(item);
+            setEditingItem(item.id);
+          }}
+          onDeleteItem={removeItemFromQuote}
+          disableDelete={!!editingItem}
+        />
       </div>
     </div>
   );

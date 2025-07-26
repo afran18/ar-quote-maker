@@ -36,6 +36,15 @@ export const QuoteProvider = ({ children }) => {
     setCustomer(updatedCustomer);
   };
 
+  const updateItemInQuote = (updatedItem) => {
+  setQuoteItems((prevItems) =>
+    prevItems.map((item) =>
+      item.id === updatedItem.id ? updatedItem : item
+    )
+  );
+};
+
+
   const resetQuote = () => {
     setCustomer({
       name: "",
@@ -54,6 +63,7 @@ export const QuoteProvider = ({ children }) => {
         addItemToQuote,
         removeItemFromQuote,
         updateCustomer,
+        updateItemInQuote,
         resetQuote,
       }}
     >

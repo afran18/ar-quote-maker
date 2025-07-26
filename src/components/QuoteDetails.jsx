@@ -6,24 +6,12 @@ import QuotePdfDocument from "./QuotePdfDocument";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-function QuoteDetails() {
-  const { customer, quoteItems, removeItemFromQuote } = useQuote();
+function QuoteDetails({ onEditItem, onDeleteItem, disableDelete }) {
+  const { customer, quoteItems } = useQuote();
   const totalAmount = quoteItems.reduce(
     (sum, item) => sum + parseFloat(item.amount || 0),
     0
   );
-
-  const editHandler = (id) => {
-    console.log(id);
-  };
-  const deleteHandler = (id) => {
-    if (window.confirm("Are you sure, you want to delete this item?")) {
-      // console.log(index);
-      console.log("Deleting it with id: ", id);
-      removeItemFromQuote(id);
-      // console.log("Item Deleted");
-    }
-  };
 
   const handleGeneratePdf = async () => {
     if (quoteItems.length <= 0) {
@@ -109,14 +97,23 @@ function QuoteDetails() {
                     <button
                       className={styles.iconBtn}
                       style={{ backgroundColor: "#28a745" }}
-                      onClick={() => editHandler(item.id)}
+                      // style={{
+                      //   backgroundColor: disableDelete ? "#a9a9a9" : "#28a745",
+                      //   cursor: disableDelete ? "not-allowed" : "pointer",
+                      // }}
+                      onClick={() => onEditItem(item)}
+                      // disabled={disableDelete}
                     >
                       <FontAwesomeIcon icon={faEdit} /> Edit
                     </button>
                     <button
                       className={styles.iconBtn}
-                      style={{ backgroundColor: "#dc3545" }}
-                      onClick={() => deleteHandler(item.id)}
+                      style={{
+                        backgroundColor: disableDelete ? "#a9a9a9" : "#dc3545",
+                        cursor: disableDelete ? "not-allowed" : "pointer",
+                      }}
+                      onClick={() => onDeleteItem(item.id)}
+                      disabled={disableDelete}
                     >
                       <FontAwesomeIcon icon={faTrash} /> Delete
                     </button>
@@ -162,7 +159,15 @@ function QuoteDetails() {
             }
           </PDFDownloadLink> */}
 
-        <button className={styles.printBtn} onClick={handleGeneratePdf}>
+        <button
+          className={styles.printBtn}
+          onClick={handleGeneratePdf}
+          disabled={disableDelete}
+          title={disableDelete ? "Finish editng item first" : ""}
+          style={{
+            cursor: disableDelete ? "not-allowed" : "pointer",
+          }}
+        >
           Download Quote
         </button>
       </footer>

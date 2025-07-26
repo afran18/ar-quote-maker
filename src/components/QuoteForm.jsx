@@ -1,7 +1,7 @@
 import CustomInput from "./CustomInput";
 import styles from "./QuoteForm.module.css";
 
-function QuoteForm({ form, onChange, onAddItem, resetForm, errors }) {
+function QuoteForm({ form, onChange, onAddItem, isEditing, resetForm, errors, }) {
   return (
     <form onSubmit={onAddItem} className={styles.quoteForm}>
       <div className={styles.formItem}>
@@ -93,7 +93,7 @@ function QuoteForm({ form, onChange, onAddItem, resetForm, errors }) {
             Reset
           </button>
           <button type="submit" className={styles.buttonSubmit}>
-            Add Item
+            {isEditing? "Update Item" : "Add Item"}
           </button>
         </div>
       </div>

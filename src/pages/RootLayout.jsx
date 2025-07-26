@@ -1,10 +1,19 @@
-import { Outlet, NavLink, useLocation } from "react-router-dom";
+import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
 import styles from "./RootLayout.module.css";
 import { logout } from "../utils/auth"; 
+import { useQuote } from "../context/useQuote";
 
 function RootLayout() {
+  const { resetQuote } = useQuote();
   const location = useLocation();
   const isSignInPage = location.pathname === "/";
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    resetQuote();
+    logout();
+    navigate("/")
+  }
 
   return (
     <>
@@ -15,7 +24,7 @@ function RootLayout() {
         {!isSignInPage && (
           <nav className={styles.navBarLeft}>
             <NavLink to="/view-quotes">View Quotes</NavLink>
-            <NavLink to="/" onClick={logout}>Sign Out</NavLink>
+            <NavLink to="/" onClick={handleLogout}>Sign Out</NavLink>
           </nav>
         )}
       </header>
