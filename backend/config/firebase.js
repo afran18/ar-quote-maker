@@ -1,7 +1,7 @@
 import admin from 'firebase-admin';
-
-// eslint-disable-next-line no-undef
-const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG);
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const serviceAccount = require('./serviceAccountKey.json');
 
 
 admin.initializeApp({
