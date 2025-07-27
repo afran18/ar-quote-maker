@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 src/utils/auth.js
+
+/backend/node_modules
+/backend/config/serviceAccountKey.json
+/backend/.env

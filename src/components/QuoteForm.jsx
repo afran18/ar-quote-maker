@@ -1,7 +1,14 @@
 import CustomInput from "./CustomInput";
 import styles from "./QuoteForm.module.css";
 
-function QuoteForm({ form, onChange, onAddItem, isEditing, resetForm, errors, }) {
+function QuoteForm({
+  form,
+  onChange,
+  onAddItem,
+  isEditing,
+  resetForm,
+  errors,
+}) {
   return (
     <form onSubmit={onAddItem} className={styles.quoteForm}>
       <div className={styles.formItem}>
@@ -83,17 +90,20 @@ function QuoteForm({ form, onChange, onAddItem, isEditing, resetForm, errors, })
         </div>
       </div>
       <div className={styles.dateAndButtonsRow}>
-        <h3>{/* Date: {customer.date || "N/A"} */}</h3>
         <div className={styles.buttonGroup}>
           <button
             type="reset"
             className={styles.buttonReset}
             onClick={resetForm}
+            disabled={isEditing}
+            style={{
+              cursor: isEditing ? "not-allowed" : "pointer",
+            }}
           >
             Reset
           </button>
           <button type="submit" className={styles.buttonSubmit}>
-            {isEditing? "Update Item" : "Add Item"}
+            {isEditing ? "Update Item" : "Add Item"}
           </button>
         </div>
       </div>
