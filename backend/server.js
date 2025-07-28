@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import customerRoutes from './routes/customerRoutes.js'
+import quoteRoutes from './routes/quoteRoutes.js'
 
 dotenv.config();
 
@@ -15,7 +16,8 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api', customerRoutes)
+app.use('/api', customerRoutes);
+app.use('/api/quote', quoteRoutes);
 
 // Health check
 app.get('/',(req, res) => {

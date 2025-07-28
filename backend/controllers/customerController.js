@@ -18,7 +18,7 @@ export const addOrGetCustomer = async (req, res) => {
         }
 
         // Else add new customer
-        const newCustomer = {name, phone, email, address};
+        const newCustomer = {name, phone, email, address, quotes : []};
         const newDocRef = await customerRef.add(newCustomer);
 
         return res.status(201).json({
