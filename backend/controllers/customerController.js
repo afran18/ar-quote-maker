@@ -13,7 +13,10 @@ export const addOrGetCustomer = async (req, res) => {
 
         if(!querySnapshot.empty) {
             // Mean customer already exists
-            const existingCustomer = querySnapshot.docs[0].data();
+            // const existingCustomer = querySnapshot.docs[0].data(); // This line had a bug and did not return id for existing customer
+
+            const doc = querySnapshot.docs[0];
+            const existingCustomer = {id: doc.id, ...doc.data()}
             return res.status(200).json({customer: existingCustomer, message: 'Existing customer found'});
         }
 

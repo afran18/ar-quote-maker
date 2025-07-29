@@ -1,6 +1,5 @@
 import { createContext, useState } from "react";
-import {v4 as uuidv4} from "uuid";
-
+import { v4 as uuidv4 } from "uuid";
 
 /* eslint-disable react-refresh/only-export-components */
 export const QuoteContext = createContext();
@@ -20,30 +19,28 @@ export const QuoteProvider = ({ children }) => {
 
   const [quoteItems, setQuoteItems] = useState([]);
 
+  const [customerId, setCustomerId] = useState(null);
+
   const addItemToQuote = (quoteItem) => {
-    const itemWithId = {...quoteItem, id: uuidv4()}
+    const itemWithId = { ...quoteItem, id: uuidv4() };
     setQuoteItems((prevQuoteItems) => [...prevQuoteItems, itemWithId]);
   };
 
   const removeItemFromQuote = (quoteItemId) => {
-    setQuoteItems((prevQuoteItems) => 
+    setQuoteItems((prevQuoteItems) =>
       prevQuoteItems.filter((item) => item.id !== quoteItemId)
     );
   };
 
-  
   const updateCustomer = (updatedCustomer) => {
     setCustomer(updatedCustomer);
   };
-0
-  const updateItemInQuote = (updatedItem) => {
-  setQuoteItems((prevItems) =>
-    prevItems.map((item) =>
-      item.id === updatedItem.id ? updatedItem : item
-    )
-  );
-};
 
+  const updateItemInQuote = (updatedItem) => {
+    setQuoteItems((prevItems) =>
+      prevItems.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+    );
+  };
 
   const resetQuote = () => {
     setCustomer({
@@ -51,23 +48,29 @@ export const QuoteProvider = ({ children }) => {
       email: "",
       phone: "",
       address: "",
+      date: new Date().toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }),
     });
     setQuoteItems([]);
+    setCustomerId(null)
+  };
+
+  const value = {
+    customer,
+    quoteItems,
+    addItemToQuote,
+    removeItemFromQuote,
+    updateCustomer,
+    updateItemInQuote,
+    resetQuote,
+    customerId,
+    setCustomerId,
   };
 
   return (
-    <QuoteContext.Provider
-      value={{
-        customer,
-        quoteItems,
-        addItemToQuote,
-        removeItemFromQuote,
-        updateCustomer,
-        updateItemInQuote,
-        resetQuote,
-      }}
-    >
-      {children}
-    </QuoteContext.Provider>
+    <QuoteContext.Provider value={value}>{children}</QuoteContext.Provider>
   );
 };

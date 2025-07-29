@@ -7,7 +7,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 function QuoteDetails({ onEditItem, onDeleteItem, disableDelete }) {
-  const { customer, quoteItems } = useQuote();
+  const { customer, quoteItems, customerId } = useQuote();
+
+  console.log("Customer id from quote details page: ", customerId);
+  
   const totalAmount = quoteItems.reduce(
     (sum, item) => sum + parseFloat(item.amount || 0),
     0

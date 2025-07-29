@@ -6,7 +6,7 @@ import { useQuote } from "../context/useQuote";
 
 function CustomerDetailsPage() {
   const navigate = useNavigate();
-  const {  updateCustomer } = useQuote();
+  const { setCustomerId, updateCustomer } = useQuote();
 
   const [customerForm, setCustomerForm] = useState({
     name: "",
@@ -22,6 +22,11 @@ function CustomerDetailsPage() {
     address: false,
   });
 
+
+  //Actions while submitting form
+  const [loading, setLoading] = useState(false)
+  const [submitError, setSubmitError] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCustomerForm((prev) => ({ ...prev, [name]: value }));
@@ -31,34 +36,74 @@ function CustomerDetailsPage() {
     }
   };
 
- const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const newErrors = {
-    name: customerForm.name.trim() === '',
-    email: customerForm.email.trim() === '',
-    phone: customerForm.phone.trim() === '',
-    address: customerForm.address.trim() === '',
+    const newErrors = {
+      name: customerForm.name.trim() === "",
+      email: customerForm.email.trim() === "",
+      phone: customerForm.phone.trim() === "",
+      address: customerForm.address.trim() === "",
+    };
+
+    setErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some(Boolean);
+    if (hasErrors) return;
+
+    setLoading(true)
+
+    try {
+      const response = await fetch("http://localhost:5000/api/customers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(customerForm),
+      });
+
+      console.log("Fetch response object:", response);
+
+      console.log("Response status:", response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server responded with error:", errorText);
+        throw new Error("Server Error: " + errorText);
+      }
+
+      const data = await response.json();
+      console.log("Data : ", data);
+      console.log("Customer: ", data.customer);
+      
+           
+      if(response.ok) {
+        setCustomerId(data.customer.id);
+        console.log("Customer ID: ", data.customer.id);
+        
+      } else {
+        console.log("Failed to add customer");
+      }
+
+      const quoteDate = new Date().toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+
+      updateCustomer({
+        ...data.customer,
+        date: quoteDate,
+      });
+
+      navigate("/quote");
+    } catch (err) {
+      console.error("Failed to submit customer", err);
+      setSubmitError("There was an error in adding customer, please try again");
+    } finally {
+      setLoading(false)
+    }
   };
-
-  setErrors(newErrors);
-
-  const hasErrors = Object.values(newErrors).some(Boolean);
-  if (hasErrors) return;
-
-  const quoteDate = new Date().toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-
-  updateCustomer({
-    ...customerForm,
-    date: quoteDate,
-  });
-
-  navigate("/quote");
-};
 
   return (
     <div className={styles.container}>
@@ -85,7 +130,7 @@ function CustomerDetailsPage() {
             value={customerForm.email}
             onChange={handleChange}
             className={styles.form}
-            error = {errors.email}
+            error={errors.email}
           />
         </div>
         <div className={styles.formItem}>
@@ -113,10 +158,11 @@ function CustomerDetailsPage() {
           />
         </div>
 
-        <button type="submit" className={styles.buttonCustomerSubmit}>
-          Next
+        <button type="submit" disabled={loading} className={styles.buttonCustomerSubmit}>
+          {loading ? "Submitting..." : "Next"}
         </button>
       </form>
+      {submitError && <p className={styles.errorText}>{submitError}</p>}
     </div>
   );
 }
