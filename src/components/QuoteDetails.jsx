@@ -10,7 +10,7 @@ function QuoteDetails({ onEditItem, onDeleteItem, disableDelete }) {
   const { customer, quoteItems, customerId } = useQuote();
 
   console.log("Customer id from quote details page: ", customerId);
-  
+
   const totalAmount = quoteItems.reduce(
     (sum, item) => sum + parseFloat(item.amount || 0),
     0
@@ -20,19 +20,53 @@ function QuoteDetails({ onEditItem, onDeleteItem, disableDelete }) {
     if (quoteItems.length <= 0) {
       alert("No items in quote");
       return;
-    } else if (window.confirm("Do you want to save and download the PDF?")) {
-      console.log("Printing pdf");
+    }
 
-      const blob = await pdf(
-        <QuotePdfDocument customer={customer} quoteItems={quoteItems} />
-      ).toBlob();
+    if (!customerId) {
+      alert("Customer is not added");
+    }
 
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "quote.pdf";
-      link.click();
-      URL.revokeObjectURL(url);
+    if (window.confirm("Do you want to save and download the PDF?")) {
+
+      try {
+        const response = await fetch("http://localhost:5000/api/quote/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            quoteItems,
+            totalAmount,
+            customerId,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Quote save failed", errorText);
+          alert("Failed to save quote to server");
+          return;
+        }
+
+        const data = await response.json();
+        console.log("Saved quote with ID: ", data.quoteId);
+
+        console.log("Printing pdf");
+
+        const blob = await pdf(
+          <QuotePdfDocument customer={customer} quoteItems={quoteItems} />
+        ).toBlob();
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "quote.pdf";
+        link.click();
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Error during saving PDF", error);
+        alert("Unexpected error while saving PDF");
+      }
     }
   };
 
