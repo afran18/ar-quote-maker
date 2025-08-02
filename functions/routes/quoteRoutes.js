@@ -3,6 +3,6 @@ import { addQuote, } from '../controllers/quoteController.js';
 
 const router = express.Router();
 
-router.post('/add', addQuote);
+router.post('/addQuote', addQuote);
 
 export default router;

@@ -54,7 +54,12 @@ function CustomerDetailsPage() {
     setLoading(true)
 
     try {
-      const response = await fetch("http://localhost:5000/api/customers", {
+
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      if (!backendUrl) {
+          throw new Error("VITE_BACKEND_URL is not defined in your .env files!");
+      }
+      const response = await fetch(`${backendUrl}/customer`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

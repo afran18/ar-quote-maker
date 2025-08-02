@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import styles from "./QuoteDetails.module.css";
 import { useQuote } from "../context/useQuote";
 import { pdf } from "@react-pdf/renderer";
@@ -6,7 +6,7 @@ import QuotePdfDocument from "./QuotePdfDocument";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-function QuoteDetails({ onEditItem, onDeleteItem, disableDelete }) {
+const QuoteDetails = memo(function QuoteDetails({ onEditItem, onDeleteItem, disableDelete }) {
   const { customer, quoteItems, customerId } = useQuote();
 
   console.log("Customer id from quote details page: ", customerId);
@@ -60,7 +60,7 @@ function QuoteDetails({ onEditItem, onDeleteItem, disableDelete }) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = "quote.pdf";
+        link.download = `Quote for ${customer.name}.pdf`;
         link.click();
         URL.revokeObjectURL(url);
       } catch (error) {
@@ -210,6 +210,6 @@ function QuoteDetails({ onEditItem, onDeleteItem, disableDelete }) {
       </footer>
     </div>
   );
-}
+});
 
 export default QuoteDetails;

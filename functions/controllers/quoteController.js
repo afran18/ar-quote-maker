@@ -1,4 +1,4 @@
-import { db, FieldValue } from "../config/firebase.js";
+import { getDb, getFieldValue } from "../config/firebase.js";
 
 export const addQuote = async (req, res) => {
   try {
@@ -19,9 +19,12 @@ export const addQuote = async (req, res) => {
       createdAt: new Date(),
     };
 
-    // Fetching customer:
-    const customerRef = db.collection("customers").doc(customerId);
+    const db = getDb();
+    const FieldValue = getFieldValue();
 
+
+    // Fetching customer:
+    const customerRef = db.collection("customers").doc(customerId); 
     // Fetching customer document
     const customerDoc = await customerRef.get();
 
@@ -36,7 +39,7 @@ export const addQuote = async (req, res) => {
 
     // Add quote to customer's quote array
     await customerRef.update({
-      quotes: FieldValue.arrayUnion(quoteRef.id),
+      quotes: FieldValue.arrayUnion(quoteRef.id), 
     });
 
     return res.status(201).json({

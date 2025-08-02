@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 /* eslint-disable react-refresh/only-export-components */
@@ -55,21 +55,23 @@ export const QuoteProvider = ({ children }) => {
       }),
     });
     setQuoteItems([]);
-    setCustomerId(null)
+    setCustomerId(null);
   };
 
-  const value = {
-    customer,
-    quoteItems,
-    addItemToQuote,
-    removeItemFromQuote,
-    updateCustomer,
-    updateItemInQuote,
-    resetQuote,
-    customerId,
-    setCustomerId,
-  };
-
+  const value = useMemo(
+    () => ({
+      customer,
+      quoteItems,
+      addItemToQuote,
+      removeItemFromQuote,
+      updateCustomer,
+      updateItemInQuote,
+      resetQuote,
+      customerId,
+      setCustomerId,
+    }),
+    [customer, quoteItems, customerId]
+  );
   return (
     <QuoteContext.Provider value={value}>{children}</QuoteContext.Provider>
   );
