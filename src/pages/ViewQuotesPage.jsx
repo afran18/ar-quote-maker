@@ -117,7 +117,7 @@ function ViewQuotesPage() {
   }, [submittedSearchQuery]); 
 
 
-  const fetchQuotes = useCallback(async (direction = "initial") => {
+const fetchQuotes = useCallback(async (direction = "initial") => {
     setLoading(true);
     setError(null);
 
@@ -135,26 +135,43 @@ function ViewQuotesPage() {
     } else if (direction === "previous") {
       newPageIndex = currentIndex - 1;
       docIdToStartAfter = currentHistory[newPageIndex];
-    } else { 
+    } else {
       newPageIndex = 0;
       docIdToStartAfter = null;
       setQuotePageHistory([null]);
       setCurrentQuotePageIndex(0);
     }
 
-    let url = `${VITE_BACKEND_URL}/quotes?limit=${PAGE_SIZE}`;
+    let quotesUrl = `${VITE_BACKEND_URL}/quote/fetchQuotes?limit=${PAGE_SIZE}`;
     if (docIdToStartAfter) {
-      url += `&lastDocId=${docIdToStartAfter}`;
+      quotesUrl += `&lastDocId=${docIdToStartAfter}`;
     }
-    if (submittedSearchQuery) {
-      url += `&search=${encodeURIComponent(submittedSearchQuery)}`;
-    }
-
+ 
     try {
-      const response = await axios.get(url);
-      const { quotes: fetchedQuotes, lastVisible: newLastVisibleId } = response.data;
+      const quotesResponse = await axios.get(quotesUrl);
+      const { quotes: fetchedQuotes, lastVisible: newLastVisibleId } = quotesResponse.data;
 
-      setQuotes(fetchedQuotes);
+      const customerIds = [...new Set(fetchedQuotes.map(quote => quote.customerId))];
+
+
+      const customerPromises = customerIds.map(id => axios.get(`${VITE_BACKEND_URL}/customer/${id}`));
+      const customerResponses = await Promise.all(customerPromises);
+
+      const customerMap = new Map();
+      customerResponses.forEach(res => {
+        const customer = res.data.customer;
+        if (customer) {
+          customerMap.set(customer.id, customer);
+        }
+      });
+
+      const quotesWithCustomerDetails = fetchedQuotes.map(quote => ({
+        ...quote,
+        customerName: customerMap.get(quote.customerId)?.name || "N/A",
+        customerPhone: customerMap.get(quote.customerId)?.phone || "N/A",
+      }));
+
+      setQuotes(quotesWithCustomerDetails);
       setLastVisibleQuoteDocId(newLastVisibleId);
 
       setQuotePageHistory(prev => {
@@ -178,8 +195,7 @@ function ViewQuotesPage() {
     } finally {
       setLoading(false);
     }
-  }, [submittedSearchQuery]); 
-
+  }, []);
 
   useEffect(() => {
     if (activeTab === "customers") {
@@ -366,9 +382,9 @@ function ViewQuotesPage() {
                 <thead>
                   <tr>
                     <th>S.No.</th>
-                    <th>Title</th>
                     <th>Customer Name</th>
-                    <th>Customer Mobile</th>
+                    <th>Mobile</th>
+                    <th>Total Amount</th>
                     <th>Quote Date</th>
                   </tr>
                 </thead>
@@ -376,15 +392,14 @@ function ViewQuotesPage() {
                   {quotes.map((quote, index) => (
                     <tr key={quote.id}>
                       <td>{currentQuotePageIndex * PAGE_SIZE + index + 1}</td>
-                      <td>{quote.title || "N/A"}</td>
-                      <td>{quote.customerName || "N/A"}</td>
-                      <td>{quote.customerPhone || "N/A"}</td>
+                      <td>{quote.customerName}</td>
+                      <td>{quote.customerPhone}</td>
+                      <td>{quote.totalAmount}</td>
                       <td>
-                        {quote.date ||
-                          (quote.createdAt &&
-                            new Date(
-                              quote.createdAt._seconds * 1000
-                            ).toLocaleDateString())}
+                        {quote.createdAt &&
+                          new Date(
+                            quote.createdAt._seconds * 1000
+                          ).toLocaleDateString()}
                       </td>
                     </tr>
                   ))}
