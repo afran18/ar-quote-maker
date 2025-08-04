@@ -165,3 +165,30 @@ export const getQuotesByCustomerIdPaginate = async (req, res) => {
     return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+export const getQuoteById = async (req, res) => {
+  try {
+    const { quoteId } = req.query;
+    
+    if(!quoteId) {
+      return res.status(400).json({message: "Quote ID is required."});
+    }
+
+    const db = getDb();
+
+    const quoteRef = db.collection("quotes").doc(quoteId);
+    const quoteDoc = await quoteRef.get();
+
+    if(!quoteDoc.exists) {
+      return res.status(404).json({message: "Quote not found"});
+    }
+
+    const quoteData = {id: quoteDoc.id, ...quoteDoc.data()};
+
+    return res.status(200).json({quote: quoteData});
+  } catch (error) {
+    console.error("Error fetching quotes by id: ", error);
+    return res.status(500).json({message: "Server Error", error: error.message})
+    
+  }
+}

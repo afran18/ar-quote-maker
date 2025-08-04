@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { useState, memo } from "react";
 import styles from "./QuoteDetails.module.css";
 import { useQuote } from "../context/useQuote";
 import { pdf } from "@react-pdf/renderer";
@@ -6,10 +6,42 @@ import QuotePdfDocument from "./QuotePdfDocument";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 
+
+const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+const CustomModal = ({ message, onConfirm, onCancel, showConfirm, showCancel }) => {
+  if (!message) return null;
+  return (
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalContent}>
+        <p>{message}</p>
+        <div className={styles.modalActions}>
+          {showConfirm && (
+            <button className={styles.modalConfirmBtn} onClick={onConfirm}>
+              Yes
+            </button>
+          )}
+          {showCancel && (
+            <button className={styles.modalCancelBtn} onClick={onCancel}>
+              No
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
 const QuoteDetails = memo(function QuoteDetails({ onEditItem, onDeleteItem, disableDelete }) {
   const { customer, quoteItems, customerId } = useQuote();
-
-  console.log("Customer id from quote details page: ", customerId);
+  const [isSaving, setIsSaving] = useState(false);
+  const [modal, setModal] = useState({
+    message: null,
+    onConfirm: null,
+    showConfirm: false,
+    showCancel: false
+  });
 
   const totalAmount = quoteItems.reduce(
     (sum, item) => sum + parseFloat(item.amount || 0),
@@ -17,61 +49,111 @@ const QuoteDetails = memo(function QuoteDetails({ onEditItem, onDeleteItem, disa
   );
 
   const handleGeneratePdf = async () => {
+
+    console.log("Generate PDF Called");
+    
     if (quoteItems.length <= 0) {
-      alert("No items in quote");
+      setModal({
+        message: "No items in quote.",
+        onConfirm: () => setModal({ message: null }),
+        showConfirm: true,
+        showCancel: false,
+      });
       return;
     }
 
     if (!customerId) {
-      alert("Customer is not added");
+      setModal({
+        message: "Customer is not added.",
+        onConfirm: () => setModal({ message: null }),
+        showConfirm: true,
+        showCancel: false,
+      });
+      return;
     }
 
-    if (window.confirm("Do you want to save and download the PDF?")) {
+    console.log("Modal being viewed");
+    
 
-      try {
-        const response = await fetch("http://localhost:5000/api/quote/add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            quoteItems,
-            totalAmount,
-            customerId,
-          }),
+    setModal({
+      message: "Do you want to save and download the PDF?",
+      onConfirm: () => {
+        setModal({ message: null });
+        saveAndDownload();
+      },
+      onCancel: () => setModal({ message: null }),
+      showConfirm: true,
+      showCancel: true,
+    });
+  };
+
+  console.log("Save pdf calling");
+  
+
+  const saveAndDownload = async () => {
+    setIsSaving(true);
+    try {
+      const response = await fetch(`${VITE_BACKEND_URL}/quote/addQuote`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          quoteItems,
+          totalAmount,
+          customerId,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Quote save failed", errorText);
+        setModal({
+          message: "Failed to save quote to server. Please try again.",
+          onConfirm: () => setModal({ message: null }),
+          showConfirm: true,
+          showCancel: false,
         });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Quote save failed", errorText);
-          alert("Failed to save quote to server");
-          return;
-        }
-
-        const data = await response.json();
-        console.log("Saved quote with ID: ", data.quoteId);
-
-        console.log("Printing pdf");
-
-        const blob = await pdf(
-          <QuotePdfDocument customer={customer} quoteItems={quoteItems} />
-        ).toBlob();
-
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `Quote for ${customer.name}.pdf`;
-        link.click();
-        URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error("Error during saving PDF", error);
-        alert("Unexpected error while saving PDF");
+        return;
       }
+
+      const data = await response.json();
+      console.log("Saved quote with ID: ", data.quoteId);
+
+      // Generate and download the PDF
+      const blob = await pdf(
+        <QuotePdfDocument customer={customer} quoteItems={quoteItems} />
+      ).toBlob();
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Quote for ${customer.name}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+      
+      setModal({
+          message: "Quote saved and PDF downloaded successfully!",
+          onConfirm: () => setModal({ message: null }),
+          showConfirm: true,
+          showCancel: false,
+        });
+    } catch (error) {
+      console.error("Error during saving PDF", error);
+      setModal({
+        message: "Unexpected error while saving and downloading PDF. Check console for details.",
+        onConfirm: () => setModal({ message: null }),
+        showConfirm: true,
+        showCancel: false,
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
     <div className={styles.quoteItems}>
+      <CustomModal {...modal} />
       <div className={styles.quoteHeader}>
         <div className={styles.ownerDetails}>
           <div className={styles.ownerDetailsLeft}>
@@ -134,12 +216,7 @@ const QuoteDetails = memo(function QuoteDetails({ onEditItem, onDeleteItem, disa
                     <button
                       className={styles.iconBtn}
                       style={{ backgroundColor: "#28a745" }}
-                      // style={{
-                      //   backgroundColor: disableDelete ? "#a9a9a9" : "#28a745",
-                      //   cursor: disableDelete ? "not-allowed" : "pointer",
-                      // }}
                       onClick={() => onEditItem(item)}
-                      // disabled={disableDelete}
                     >
                       <FontAwesomeIcon icon={faEdit} /> Edit
                     </button>
@@ -178,34 +255,16 @@ const QuoteDetails = memo(function QuoteDetails({ onEditItem, onDeleteItem, disa
             minimumFractionDigits: 2,
           })}
         </div>
-        {/* Button to print pdf*/}
-        {/* <PDFDownloadLink
-            document={
-              <QuotePdfDocument customer={customer} quoteItems={quoteItems} />
-            }
-            fileName="quote.pdf"
-          >
-            {({ loading }) =>
-              loading ? (
-                <button className={styles.printBtn} disabled>
-                  Generating PDF...
-                </button>
-              ) : (
-                <button className={styles.printBtn}>Download Quote</button>
-              )
-            }
-          </PDFDownloadLink> */}
-
         <button
           className={styles.printBtn}
           onClick={handleGeneratePdf}
-          disabled={disableDelete}
-          title={disableDelete ? "Finish editng item first" : ""}
+          disabled={isSaving || disableDelete}
+          title={isSaving || disableDelete ? "Finish editing item or wait for saving to finish" : ""}
           style={{
-            cursor: disableDelete ? "not-allowed" : "pointer",
+            cursor: isSaving || disableDelete ? "not-allowed" : "pointer",
           }}
         >
-          Download Quote
+          {isSaving ? "Saving & Generating..." : "Download Quote"}
         </button>
       </footer>
     </div>

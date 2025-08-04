@@ -13,8 +13,8 @@ function ViewQuotesPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [submittedSearchQuery, setSubmittedSearchQuery] = useState("");
+  // const [searchQuery, setSearchQuery] = useState("");
+  // const [submittedSearchQuery, setSubmittedSearchQuery] = useState("");
 
   const [customers, setCustomers] = useState([]);
 
@@ -79,9 +79,9 @@ function ViewQuotesPage() {
     if (docIdToStartAfter) {
       url += `&lastDocId=${docIdToStartAfter}`;
     }
-    if (submittedSearchQuery) {
-      url += `&search=${encodeURIComponent(submittedSearchQuery)}`;
-    }
+    // if (submittedSearchQuery) {
+    //   url += `&search=${encodeURIComponent(submittedSearchQuery)}`;
+    // }
 
     try {
       const response = await axios.get(url);
@@ -114,7 +114,7 @@ function ViewQuotesPage() {
     } finally {
       setLoading(false);
     }
-  }, [submittedSearchQuery]); 
+  }, []); 
 
 
 const fetchQuotes = useCallback(async (direction = "initial") => {
@@ -205,26 +205,26 @@ const fetchQuotes = useCallback(async (direction = "initial") => {
       console.log("useEffect: activeTab quotes, triggering initial fetch");
       fetchQuotes("initial");
     }
-  }, [activeTab, submittedSearchQuery, fetchCustomers, fetchQuotes]);
+  }, [activeTab, fetchCustomers, fetchQuotes]);
 
   const handleCreateQuote = () => {
     navigate("/customer");
   };
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
+  // const handleSearchChange = (event) => {
+  //   setSearchQuery(event.target.value);
+  // };
 
-  const handleSearchSubmit = () => {
+  // const handleSearchSubmit = () => {
 
-    setSubmittedSearchQuery(searchQuery);
-  };
+  //   setSubmittedSearchQuery(searchQuery);
+  // };
 
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      handleSearchSubmit();
-    }
-  };
+  // const handleKeyDown = (event) => {
+  //   if (event.key === "Enter") {
+  //     handleSearchSubmit();
+  //   }
+  // };
 
   const handleNextPage = () => {
     console.log(`Clicked next in ${activeTab}`);
@@ -266,7 +266,7 @@ const fetchQuotes = useCallback(async (direction = "initial") => {
         </button>
       </div>
 
-      <div className={styles.searchBar}>
+      {/* <div className={styles.searchBar}>
         <input
           type="text"
           placeholder="Search by customer mobile or quote title..."
@@ -278,7 +278,7 @@ const fetchQuotes = useCallback(async (direction = "initial") => {
         <button onClick={handleSearchSubmit} className={styles.searchButton}>
           Search
         </button>
-      </div>
+      </div> */}
 
       <div className={styles.controls}>
         <div className={styles.tabs}>
