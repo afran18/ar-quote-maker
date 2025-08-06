@@ -1,6 +1,7 @@
 import React, { useState, memo } from "react";
 import styles from "./QuoteDetails.module.css";
-import { useQuote } from "../context/useQuote";
+import { useCustomer } from "../context/CustomerContext.jsx";
+import { useQuote } from "../context/QuoteContext.jsx";
 import { pdf } from "@react-pdf/renderer";
 import QuotePdfDocument from "./QuotePdfDocument";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -34,7 +35,10 @@ const CustomModal = ({ message, onConfirm, onCancel, showConfirm, showCancel }) 
 
 
 const QuoteDetails = memo(function QuoteDetails({ onEditItem, onDeleteItem, disableDelete }) {
-  const { customer, quoteItems, customerId } = useQuote();
+  const { quoteItems } = useQuote();
+  const { customer, customerId } = useCustomer();
+
+
   const [isSaving, setIsSaving] = useState(false);
   const [modal, setModal] = useState({
     message: null,

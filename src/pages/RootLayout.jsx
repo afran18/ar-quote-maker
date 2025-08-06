@@ -1,10 +1,10 @@
 import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
 import styles from "./RootLayout.module.css";
 import { logout } from "../utils/auth"; 
-import { useQuote } from "../context/useQuote";
+import { useResetQuote } from "../context/useResetQoute.js";
 
 function RootLayout() {
-  const { resetQuote } = useQuote();
+  const { resetQuote } = useResetQuote();
   const location = useLocation();
   const isSignInPage = location.pathname === "/";
   const navigate = useNavigate();

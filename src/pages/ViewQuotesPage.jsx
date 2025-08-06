@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./ViewQuotesPage.module.css";
 import axios from "axios";
-import { useQuote } from "../context/useQuote";
+import { useCustomer } from "../context/CustomerContext.jsx";
 import CustomerActionModal from "../components/CustomerActionModal";
 
 const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -10,7 +10,7 @@ const PAGE_SIZE = 5;
 
 function ViewQuotesPage() {
   const navigate = useNavigate();
-  const { updateCustomer, setCustomerId } = useQuote();
+  const { updateCustomer, setCustomerId, setIsEditingCustomer } = useCustomer();
 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -445,6 +445,7 @@ function ViewQuotesPage() {
           onEdit={() => {
             updateCustomer(selectedCustomer);
             setCustomerId(selectedCustomer.id);
+            setIsEditingCustomer(true);
             setShowModal(false);
             navigate("/customer");
           }}

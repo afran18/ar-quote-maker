@@ -225,8 +225,10 @@ export const updateCustomer = async (req, res) => {
     if(address !== undefined) updatePayload.address = address;
 
     await customerRef.update(updatePayload);
+    const updatedCustomer = { id, ...doc.data(), ...updatePayload };
 
-    return res.status(200).json({ message: "Customer updated successfully" });
+    res.status(200).json({ message: 'Customer updated successfully', customer: updatedCustomer });
+
   } catch (error) {
     console.error("Error updating customer", error);
     return res.status(500).json({ message: "Server error", error });

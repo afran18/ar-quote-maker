@@ -3,7 +3,7 @@ import QuoteDetails from "../components/QuoteDetails";
 import QuoteForm from "../components/QuoteForm";
 import { calcSqft, calcTotalSqft, calcAmount } from "../utils/calcUtils";
 import styles from "./QuoteFormPage.module.css";
-import { useQuote } from "../context/useQuote";
+import { useQuote } from "../context/QuoteContext.jsx";
 
 function QuoteFormPage() {
   const { addItemToQuote, quoteItems, removeItemFromQuote, updateItemInQuote } = useQuote();

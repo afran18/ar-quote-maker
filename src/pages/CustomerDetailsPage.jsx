@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./CustomerDetailsPage.module.css";
 import CustomInput from "../components/CustomInput";
-import { useQuote } from "../context/useQuote";
+import { useCustomer } from "../context/CustomerContext.jsx";
 
 function CustomerDetailsPage() {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ function CustomerDetailsPage() {
     customer,
     isEditingCustomer,
     setIsEditingCustomer,
-  } = useQuote();
+  } = useCustomer();
 
   const [customerForm, setCustomerForm] = useState({
     name: "",
@@ -75,6 +75,9 @@ function CustomerDetailsPage() {
     setLoading(true);
 
     try {
+      console.log("before update editing state: ", isEditingCustomer);
+      console.log("before update customer id: ", customer.id);
+
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
       const url = isEditingCustomer
@@ -107,12 +110,8 @@ function CustomerDetailsPage() {
       console.log("Data : ", data);
       console.log("Customer: ", data.customer);
 
-      if (response.ok) {
-        setCustomerId(data.customer.id);
-        console.log("Customer ID: ", data.customer.id);
-      } else {
-        console.log("Failed to add customer");
-      }
+      setCustomerId(data.customer.id);
+      console.log("Customer ID: ", data.customer.id);
 
       const quoteDate = new Date().toLocaleDateString("en-IN", {
         day: "numeric",

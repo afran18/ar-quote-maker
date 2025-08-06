@@ -1,27 +1,12 @@
-import { createContext, useState, useMemo } from "react";
+import { createContext, useState, useMemo, useCallback, useContext } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 /* eslint-disable react-refresh/only-export-components */
-export const QuoteContext = createContext();
+const QuoteContext = createContext();
 
 export const QuoteProvider = ({ children }) => {
-  const [customer, setCustomer] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    date: new Date().toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }),
-  });
 
   const [quoteItems, setQuoteItems] = useState([]);
-
-  const [customerId, setCustomerId] = useState(null);
-  const [isEditingCustomer, setIsEditingCustomer] = useState(false);
-
 
   const addItemToQuote = (quoteItem) => {
     const itemWithId = { ...quoteItem, id: uuidv4() };
@@ -34,9 +19,7 @@ export const QuoteProvider = ({ children }) => {
     );
   };
 
-  const updateCustomer = (updatedCustomer) => {
-    setCustomer(updatedCustomer);
-  };
+  
 
   const updateItemInQuote = (updatedItem) => {
     setQuoteItems((prevItems) =>
@@ -44,39 +27,24 @@ export const QuoteProvider = ({ children }) => {
     );
   };
 
-  const resetQuote = () => {
-    setCustomer({
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      date: new Date().toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-    });
+    const resetQuoteItems = useCallback(() => {
     setQuoteItems([]);
-    setCustomerId(null);
-  };
+  }, []);
+
 
   const value = useMemo(
     () => ({
-      customer,
       quoteItems,
       addItemToQuote,
       removeItemFromQuote,
-      updateCustomer,
       updateItemInQuote,
-      resetQuote,
-      customerId,
-      setCustomerId,
-      isEditingCustomer,
-      setIsEditingCustomer
+      resetQuoteItems,
     }),
-    [customer, quoteItems, customerId, isEditingCustomer]
+    [quoteItems, resetQuoteItems]
   );
   return (
     <QuoteContext.Provider value={value}>{children}</QuoteContext.Provider>
   );
 };
+
+export const useQuote = () => useContext(QuoteContext)

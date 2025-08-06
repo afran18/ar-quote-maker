@@ -4,10 +4,14 @@ import "./index.css";
 import App from "./App.jsx";
 import { QuoteProvider } from "./context/QuoteContext.jsx";
 
+import { CustomerProvider } from "./context/CustomerContext.jsx";
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <QuoteProvider>
-      <App />
-    </QuoteProvider>
+    <CustomerProvider>
+      <QuoteProvider>
+        <App />
+      </QuoteProvider>
+    </CustomerProvider>
   </StrictMode>
 );
