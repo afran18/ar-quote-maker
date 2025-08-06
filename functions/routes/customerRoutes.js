@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/', addOrGetCustomer);
 // router.get('/', getAllCustomers);
 router.get('/search', getCustomerByPhone);
-router.get('/', getAllCustomersPaginate)
+router.get('/', getAllCustomersPaginate);
 router.get("/:id", getCustomerById);
 router.put('/:id', updateCustomer);
 router.delete('/:id', deleteCustomer);

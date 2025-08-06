@@ -202,6 +202,14 @@ export const updateCustomer = async (req, res) => {
 
     const { name, phone, email, address } = req.body;
 
+    if(!id) {
+      return res.status(400).json({message: "Customer ID is required"});
+    }
+
+    if(!name && !phone && !email && !address) {
+      return res.status(400).json({message: "Atleast one field must be provided for update"})
+    }
+
     const db = getDb();
     const customerRef = db.collection("customers").doc(id);
     const doc = await customerRef.get();
@@ -210,7 +218,13 @@ export const updateCustomer = async (req, res) => {
       return res.status(404).json({ message: "Customer not found" });
     }
 
-    await customerRef.update({ name, phone, email, address });
+    const updatePayload = {};
+    if(name !== undefined) updatePayload.name = name;
+    if(phone !== undefined) updatePayload.phone = phone;
+    if(email !== undefined) updatePayload.email = email;
+    if(address !== undefined) updatePayload.address = address;
+
+    await customerRef.update(updatePayload);
 
     return res.status(200).json({ message: "Customer updated successfully" });
   } catch (error) {

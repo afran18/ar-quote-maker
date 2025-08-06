@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./CustomerDetailsPage.module.css";
 import CustomInput from "../components/CustomInput";
@@ -6,7 +6,13 @@ import { useQuote } from "../context/useQuote";
 
 function CustomerDetailsPage() {
   const navigate = useNavigate();
-  const { setCustomerId, updateCustomer } = useQuote();
+  const {
+    setCustomerId,
+    updateCustomer,
+    customer,
+    isEditingCustomer,
+    setIsEditingCustomer,
+  } = useQuote();
 
   const [customerForm, setCustomerForm] = useState({
     name: "",
@@ -22,9 +28,24 @@ function CustomerDetailsPage() {
     address: false,
   });
 
+  useEffect(() => {
+    if (
+      customer?.name ||
+      customer?.email ||
+      customer?.phone ||
+      customer?.address
+    ) {
+      setCustomerForm({
+        name: customer.name || "",
+        email: customer.email || "",
+        phone: customer.phone || "",
+        address: customer.address || "",
+      });
+    }
+  }, [customer]);
 
   //Actions while submitting form
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
   const handleChange = (e) => {
@@ -51,16 +72,21 @@ function CustomerDetailsPage() {
     const hasErrors = Object.values(newErrors).some(Boolean);
     if (hasErrors) return;
 
-    setLoading(true)
+    setLoading(true);
 
     try {
-
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+      const url = isEditingCustomer
+        ? `${backendUrl}/customer/${customer.id}`
+        : `${backendUrl}/customer`;
+      const method = isEditingCustomer ? "PUT" : "POST";
+
       if (!backendUrl) {
-          throw new Error("VITE_BACKEND_URL is not defined in your .env files!");
+        throw new Error("VITE_BACKEND_URL is not defined in your .env files!");
       }
-      const response = await fetch(`${backendUrl}/customer`, {
-        method: "POST",
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
@@ -80,12 +106,10 @@ function CustomerDetailsPage() {
       const data = await response.json();
       console.log("Data : ", data);
       console.log("Customer: ", data.customer);
-      
-           
-      if(response.ok) {
+
+      if (response.ok) {
         setCustomerId(data.customer.id);
         console.log("Customer ID: ", data.customer.id);
-        
       } else {
         console.log("Failed to add customer");
       }
@@ -100,13 +124,16 @@ function CustomerDetailsPage() {
         ...data.customer,
         date: quoteDate,
       });
+      if (isEditingCustomer) {
+        setIsEditingCustomer(false);
+      }
 
       navigate("/quote");
     } catch (err) {
       console.error("Failed to submit customer", err);
       setSubmitError("There was an error in adding customer, please try again");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -163,8 +190,12 @@ function CustomerDetailsPage() {
           />
         </div>
 
-        <button type="submit" disabled={loading} className={styles.buttonCustomerSubmit}>
-          {loading ? "Submitting..." : "Next"}
+        <button
+          type="submit"
+          disabled={loading}
+          className={styles.buttonCustomerSubmit}
+        >
+          {loading ? "Submitting..." : isEditingCustomer ? "Update" : "Next"}
         </button>
       </form>
       {submitError && <p className={styles.errorText}>{submitError}</p>}

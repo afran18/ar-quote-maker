@@ -2,12 +2,18 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./ViewQuotesPage.module.css";
 import axios from "axios";
+import { useQuote } from "../context/useQuote";
+import CustomerActionModal from "../components/CustomerActionModal";
 
 const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-const PAGE_SIZE = 5; 
+const PAGE_SIZE = 5;
 
 function ViewQuotesPage() {
   const navigate = useNavigate();
+  const { updateCustomer, setCustomerId } = useQuote();
+
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const [activeTab, setActiveTab] = useState("customers");
   const [loading, setLoading] = useState(false);
@@ -18,9 +24,10 @@ function ViewQuotesPage() {
 
   const [customers, setCustomers] = useState([]);
 
-  const [lastVisibleCustomerDocId, setLastVisibleCustomerDocId] = useState(null);
+  const [lastVisibleCustomerDocId, setLastVisibleCustomerDocId] =
+    useState(null);
   const [customerPageHistory, setCustomerPageHistory] = useState([null]);
-  const [currentPageIndex, setCurrentPageIndex] = useState(0); 
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
   const [quotes, setQuotes] = useState([]);
   const [lastVisibleQuoteDocId, setLastVisibleQuoteDocId] = useState(null);
@@ -56,9 +63,12 @@ function ViewQuotesPage() {
     const currentIndex = customerPageIndexRef.current;
 
     let docIdToStartAfter;
-    let newPageIndex; 
+    let newPageIndex;
 
-    console.log(`fetchCustomers called. Direction: ${direction}, Current Index (before update): ${currentIndex}, History: `, currentHistory);
+    console.log(
+      `fetchCustomers called. Direction: ${direction}, Current Index (before update): ${currentIndex}, History: `,
+      currentHistory
+    );
 
     if (direction === "next") {
       newPageIndex = currentIndex + 1;
@@ -68,11 +78,11 @@ function ViewQuotesPage() {
       newPageIndex = currentIndex - 1;
 
       docIdToStartAfter = currentHistory[newPageIndex];
-    } else { 
+    } else {
       newPageIndex = 0;
-      docIdToStartAfter = null; 
-      setCustomerPageHistory([null]); 
-      setCurrentPageIndex(0); 
+      docIdToStartAfter = null;
+      setCustomerPageHistory([null]);
+      setCurrentPageIndex(0);
     }
 
     let url = `${VITE_BACKEND_URL}/customer?limit=${PAGE_SIZE}`;
@@ -85,27 +95,28 @@ function ViewQuotesPage() {
 
     try {
       const response = await axios.get(url);
-      const { customers: fetchedCustomers, lastVisible: newLastVisibleId } = response.data;
+      const { customers: fetchedCustomers, lastVisible: newLastVisibleId } =
+        response.data;
 
       setCustomers(fetchedCustomers);
 
       setLastVisibleCustomerDocId(newLastVisibleId);
 
-
-      setCustomerPageHistory(prev => {
-
-        if (newPageIndex >= prev.length - 1) { 
+      setCustomerPageHistory((prev) => {
+        if (newPageIndex >= prev.length - 1) {
           const newHistory = [...prev];
-          newHistory[newPageIndex + 1] = newLastVisibleId; 
+          newHistory[newPageIndex + 1] = newLastVisibleId;
           return newHistory;
         }
-        return prev; 
+        return prev;
       });
 
-      setCurrentPageIndex(newPageIndex); 
+      setCurrentPageIndex(newPageIndex);
 
-      console.log(`fetchCustomers done. Fetched ${fetchedCustomers.length} customers. New Index: ${newPageIndex}, Last Visible ID of fetched page: ${newLastVisibleId}, Updated History: `, customerPageHistoryRef.current);
-
+      console.log(
+        `fetchCustomers done. Fetched ${fetchedCustomers.length} customers. New Index: ${newPageIndex}, Last Visible ID of fetched page: ${newLastVisibleId}, Updated History: `,
+        customerPageHistoryRef.current
+      );
     } catch (err) {
       console.error("Error fetching customers:", err);
       setError("Failed to load customers. Please try again.");
@@ -114,10 +125,9 @@ function ViewQuotesPage() {
     } finally {
       setLoading(false);
     }
-  }, []); 
+  }, []);
 
-
-const fetchQuotes = useCallback(async (direction = "initial") => {
+  const fetchQuotes = useCallback(async (direction = "initial") => {
     setLoading(true);
     setError(null);
 
@@ -127,7 +137,10 @@ const fetchQuotes = useCallback(async (direction = "initial") => {
     let docIdToStartAfter;
     let newPageIndex;
 
-    console.log(`fetchQuotes called. Direction: ${direction}, Current Index (before update): ${currentIndex}, History: `, currentHistory);
+    console.log(
+      `fetchQuotes called. Direction: ${direction}, Current Index (before update): ${currentIndex}, History: `,
+      currentHistory
+    );
 
     if (direction === "next") {
       newPageIndex = currentIndex + 1;
@@ -146,26 +159,30 @@ const fetchQuotes = useCallback(async (direction = "initial") => {
     if (docIdToStartAfter) {
       quotesUrl += `&lastDocId=${docIdToStartAfter}`;
     }
- 
+
     try {
       const quotesResponse = await axios.get(quotesUrl);
-      const { quotes: fetchedQuotes, lastVisible: newLastVisibleId } = quotesResponse.data;
+      const { quotes: fetchedQuotes, lastVisible: newLastVisibleId } =
+        quotesResponse.data;
 
-      const customerIds = [...new Set(fetchedQuotes.map(quote => quote.customerId))];
+      const customerIds = [
+        ...new Set(fetchedQuotes.map((quote) => quote.customerId)),
+      ];
 
-
-      const customerPromises = customerIds.map(id => axios.get(`${VITE_BACKEND_URL}/customer/${id}`));
+      const customerPromises = customerIds.map((id) =>
+        axios.get(`${VITE_BACKEND_URL}/customer/${id}`)
+      );
       const customerResponses = await Promise.all(customerPromises);
 
       const customerMap = new Map();
-      customerResponses.forEach(res => {
+      customerResponses.forEach((res) => {
         const customer = res.data.customer;
         if (customer) {
           customerMap.set(customer.id, customer);
         }
       });
 
-      const quotesWithCustomerDetails = fetchedQuotes.map(quote => ({
+      const quotesWithCustomerDetails = fetchedQuotes.map((quote) => ({
         ...quote,
         customerName: customerMap.get(quote.customerId)?.name || "N/A",
         customerPhone: customerMap.get(quote.customerId)?.phone || "N/A",
@@ -174,7 +191,7 @@ const fetchQuotes = useCallback(async (direction = "initial") => {
       setQuotes(quotesWithCustomerDetails);
       setLastVisibleQuoteDocId(newLastVisibleId);
 
-      setQuotePageHistory(prev => {
+      setQuotePageHistory((prev) => {
         if (newPageIndex >= prev.length - 1) {
           const newHistory = [...prev];
           newHistory[newPageIndex + 1] = newLastVisibleId;
@@ -185,8 +202,10 @@ const fetchQuotes = useCallback(async (direction = "initial") => {
 
       setCurrentQuotePageIndex(newPageIndex);
 
-      console.log(`fetchQuotes done. Fetched ${fetchedQuotes.length} quotes. New Index: ${newPageIndex}, Last Visible ID of fetched page: ${newLastVisibleId}, Updated History: `, quotePageHistoryRef.current);
-
+      console.log(
+        `fetchQuotes done. Fetched ${fetchedQuotes.length} quotes. New Index: ${newPageIndex}, Last Visible ID of fetched page: ${newLastVisibleId}, Updated History: `,
+        quotePageHistoryRef.current
+      );
     } catch (err) {
       console.error("Error fetching quotes:", err);
       setError("Failed to load quotes. Please try again.");
@@ -228,10 +247,9 @@ const fetchQuotes = useCallback(async (direction = "initial") => {
 
   const handleNextPage = () => {
     console.log(`Clicked next in ${activeTab}`);
-    if (loading) return; 
+    if (loading) return;
 
     if (activeTab === "customers") {
-
       if (!lastVisibleCustomerDocId && customers.length < PAGE_SIZE) {
         console.log("No more customers to load for next page.");
         return;
@@ -248,13 +266,18 @@ const fetchQuotes = useCallback(async (direction = "initial") => {
 
   const handlePreviousPage = () => {
     console.log(`Clicked prev in ${activeTab}`);
-    if (loading) return; 
+    if (loading) return;
 
     if (activeTab === "customers" && currentPageIndex > 0) {
       fetchCustomers("previous");
     } else if (activeTab === "quotes" && currentQuotePageIndex > 0) {
       fetchQuotes("previous");
     }
+  };
+
+  const handleCustomerClick = (customer) => {
+    setSelectedCustomer(customer);
+    setShowModal(true);
   };
 
   return (
@@ -316,9 +339,11 @@ const fetchQuotes = useCallback(async (direction = "initial") => {
             disabled={
               loading ||
               (activeTab === "customers" &&
-                (!lastVisibleCustomerDocId && customers.length < PAGE_SIZE)) ||
+                !lastVisibleCustomerDocId &&
+                customers.length < PAGE_SIZE) ||
               (activeTab === "quotes" &&
-                (!lastVisibleQuoteDocId && quotes.length < PAGE_SIZE))
+                !lastVisibleQuoteDocId &&
+                quotes.length < PAGE_SIZE)
             }
           >
             Next &rarr;
@@ -347,14 +372,18 @@ const fetchQuotes = useCallback(async (direction = "initial") => {
                 </thead>
                 <tbody>
                   {customers.map((customer, index) => (
-                    <tr key={customer.id}>
+                    <tr
+                      key={customer.id}
+                      onClick={() => handleCustomerClick(customer)}
+                      style={{ cursor: "pointer" }}
+                    >
                       <td>{currentPageIndex * PAGE_SIZE + index + 1}</td>
                       <td>{customer.name}</td>
                       <td>{customer.phone}</td>
                       <td>{customer.email}</td>
                       <td className={styles.addressColumn}>
                         <div className={styles.addressContent}>
-                           {customer.address}
+                          {customer.address}
                         </div>
                       </td>
                       <td>
@@ -409,6 +438,31 @@ const fetchQuotes = useCallback(async (direction = "initial") => {
           </div>
         )}
       </div>
+      {showModal && (
+        <CustomerActionModal
+          customer={selectedCustomer}
+          onClose={() => setShowModal(false)}
+          onEdit={() => {
+            updateCustomer(selectedCustomer);
+            setCustomerId(selectedCustomer.id);
+            setShowModal(false);
+            navigate("/customer");
+          }}
+          onCreateQuote={() => {
+            updateCustomer({
+              ...selectedCustomer,
+              date: new Date().toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }),
+            });
+            setCustomerId(selectedCustomer.id);
+            setShowModal(false);
+            navigate("/quote");
+          }}
+        />
+      )}
     </div>
   );
 }
