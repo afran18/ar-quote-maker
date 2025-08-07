@@ -167,15 +167,14 @@ export const getQuotesByCustomerIdPaginate = async (req, res) => {
 };
 
 export const getQuoteById = async (req, res) => {
-  try {
-    const { quoteId } = req.query;
+  const { quoteId } = req.params;
     
     if(!quoteId) {
       return res.status(400).json({message: "Quote ID is required."});
     }
 
+  try {
     const db = getDb();
-
     const quoteRef = db.collection("quotes").doc(quoteId);
     const quoteDoc = await quoteRef.get();
 
@@ -189,6 +188,48 @@ export const getQuoteById = async (req, res) => {
   } catch (error) {
     console.error("Error fetching quotes by id: ", error);
     return res.status(500).json({message: "Server Error", error: error.message})
+  }
+}
+
+export const updateQuote = async (req, res) => {
+  try {
+    const { quoteId } = req.params;
+    const {quoteItems, totalAmount, customerId } = req.body;
+
+    if(!quoteId) {
+      return res.status(400).json({message: "Quote ID is required"});
+    }
+
+    if (!quoteItems && !totalAmount && !customerId) {
+      return res.status(400).json({ message: "At least one field must be provided for update" });
+    }
+
+    const db = getDb();
+
+    const quoteRef = db.collection("quotes").doc(quoteId);
+
+    const quoteSnapshot = await quoteRef.get();
+
+    if (!quoteSnapshot.exists) {
+      return res.status(404).json({message: "Quote not found"});
+    }
+
+    const updatePayload = {};
+    if(quoteItems !== undefined) updatePayload.quoteItems = quoteItems;
+    if(totalAmount !== undefined) updatePayload.totalAmount = totalAmount;
+    if(customerId !== undefined) updatePayload.customerId = customerId;
+
+    updatePayload.updatedAt = new Date()
+
+    await quoteRef.update(updatePayload);
+    const updatedQuote = { quoteId, ...quoteSnapshot.data(), ...updatePayload };
+
+    res.status(200).json({ message: 'Quote updated successfully', quote: updatedQuote });
+
+
+  } catch (error) {
+    console.error("Error updating quote: ", error);
+    res.status(500).json({message: "Server error.", error: error.message});
     
   }
 }

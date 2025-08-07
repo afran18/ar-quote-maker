@@ -185,7 +185,6 @@ function QuoteForm({ onAddItem, onUpdateItem, editingItem, setEditingItem }) {
           />
         </div>
       </div>
-      <div className={styles.dateAndButtonsRow}>
         <div className={styles.buttonGroup}>
           <button
             type="reset"
@@ -202,7 +201,6 @@ function QuoteForm({ onAddItem, onUpdateItem, editingItem, setEditingItem }) {
             {isEditing ? "Update Item" : "Add Item"}
           </button>
         </div>
-      </div>
     </form>
   );
 }

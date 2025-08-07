@@ -4,6 +4,7 @@ import styles from "./ViewQuotesPage.module.css";
 import axios from "axios";
 import { useCustomer } from "../context/CustomerContext.jsx";
 import CustomerActionModal from "../components/CustomerActionModal";
+import { useQuote } from "../context/QuoteContext.jsx";
 
 const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const PAGE_SIZE = 5;
@@ -11,9 +12,11 @@ const PAGE_SIZE = 5;
 function ViewQuotesPage() {
   const navigate = useNavigate();
   const { updateCustomer, setCustomerId, setIsEditingCustomer } = useCustomer();
+  const { quoteId, setQuoteId, quoteItems,setQuoteItems } = useQuote();
 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
 
   const [activeTab, setActiveTab] = useState("customers");
   const [loading, setLoading] = useState(false);
@@ -280,6 +283,36 @@ function ViewQuotesPage() {
     setShowModal(true);
   };
 
+  const handleQuoteClick = async (quote) => {
+    const quoteResponse = await axios.get(
+      `${VITE_BACKEND_URL}/quote/fetchQuotes/${quote.id}`
+    );
+
+    const fetchedQuote = quoteResponse.data.quote;
+    setQuoteId(fetchedQuote.id);
+    setQuoteItems(fetchedQuote.quoteItems);
+
+    console.log("Selected Quote: ", fetchedQuote);
+    console.log("Quote ID from context: ", quoteId);
+    console.log("Quote context: ", quoteItems);
+
+    const customerResponse = await axios.get(
+      `${VITE_BACKEND_URL}/customer/${fetchedQuote.customerId}`
+    );
+
+    const fetchedCustomer = customerResponse.data.customer;
+
+    console.log("Fetched Customer: ", fetchedCustomer);
+
+    updateCustomer(fetchedCustomer);
+    setCustomerId(fetchedCustomer.id)
+    
+
+    console.log("Customer from context: ", fetchedCustomer);
+
+    navigate("/quote");
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -419,7 +452,11 @@ function ViewQuotesPage() {
                 </thead>
                 <tbody>
                   {quotes.map((quote, index) => (
-                    <tr key={quote.id}>
+                    <tr
+                      key={quote.id}
+                      onClick={() => handleQuoteClick(quote)}
+                      style={{ cursor: "pointer" }}
+                    >
                       <td>{currentQuotePageIndex * PAGE_SIZE + index + 1}</td>
                       <td>{quote.customerName}</td>
                       <td>{quote.customerPhone}</td>

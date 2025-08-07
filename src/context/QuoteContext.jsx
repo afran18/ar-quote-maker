@@ -7,6 +7,7 @@ const QuoteContext = createContext();
 export const QuoteProvider = ({ children }) => {
 
   const [quoteItems, setQuoteItems] = useState([]);
+  const [quoteId, setQuoteId] = useState(null);
 
   const addItemToQuote = (quoteItem) => {
     const itemWithId = { ...quoteItem, id: uuidv4() };
@@ -39,8 +40,11 @@ export const QuoteProvider = ({ children }) => {
       removeItemFromQuote,
       updateItemInQuote,
       resetQuoteItems,
+      quoteId,
+      setQuoteId,
+      setQuoteItems
     }),
-    [quoteItems, resetQuoteItems]
+    [quoteItems, resetQuoteItems, quoteId]
   );
   return (
     <QuoteContext.Provider value={value}>{children}</QuoteContext.Provider>

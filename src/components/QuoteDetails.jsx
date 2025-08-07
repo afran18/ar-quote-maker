@@ -6,11 +6,17 @@ import { pdf } from "@react-pdf/renderer";
 import QuotePdfDocument from "./QuotePdfDocument";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
-
+import { useNavigate } from "react-router-dom";
 
 const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-const CustomModal = ({ message, onConfirm, onCancel, showConfirm, showCancel }) => {
+const CustomModal = ({
+  message,
+  onConfirm,
+  onCancel,
+  showConfirm,
+  showCancel,
+}) => {
   if (!message) return null;
   return (
     <div className={styles.modalOverlay}>
@@ -33,19 +39,23 @@ const CustomModal = ({ message, onConfirm, onCancel, showConfirm, showCancel }) 
   );
 };
 
+const QuoteDetails = memo(function QuoteDetails({
+  onEditItem,
+  onDeleteItem,
+  disableDelete,
+}) {
 
-const QuoteDetails = memo(function QuoteDetails({ onEditItem, onDeleteItem, disableDelete }) {
-  console.log('QuoteDetails is rendering'); 
-  const { quoteItems } = useQuote();
+  const navigate = useNavigate();
+  console.log("QuoteDetails is rendering");
+  const { quoteItems, quoteId } = useQuote();
   const { customer, customerId } = useCustomer();
-
 
   const [isSaving, setIsSaving] = useState(false);
   const [modal, setModal] = useState({
     message: null,
     onConfirm: null,
     showConfirm: false,
-    showCancel: false
+    showCancel: false,
   });
 
   const totalAmount = quoteItems.reduce(
@@ -53,10 +63,76 @@ const QuoteDetails = memo(function QuoteDetails({ onEditItem, onDeleteItem, disa
     0
   );
 
-  const handleGeneratePdf = async () => {
+  const saveQuote = async () => {
+    setIsSaving(true);
 
+    const method = quoteId ? "PUT" : "POST";
+    const url = quoteId
+      ? `${VITE_BACKEND_URL}/quote/${quoteId}`
+      : `${VITE_BACKEND_URL}/quote/addQuote`;
+
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          quoteItems,
+          totalAmount,
+          customerId,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Quote save failed", errorText);
+        setModal({
+          message: "Failed to save quote. Please try again.",
+          onConfirm: () => setModal({ message: null }),
+          showConfirm: true,
+          showCancel: false,
+        });
+        return;
+      }
+
+      const data = await response.json();
+      console.log("Saved quote with ID: ", data.quoteId);
+
+      const blob = await pdf(
+        <QuotePdfDocument customer={customer} quoteItems={quoteItems} />
+      ).toBlob();
+
+      const urlBlob = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = urlBlob;
+      link.download = `Quote for ${customer.name}.pdf`;
+      link.click();
+      URL.revokeObjectURL(urlBlob);
+
+      setModal({
+        message: "Quote saved and PDF downloaded successfully!",
+        onConfirm: () => setModal({ message: null }),
+        showConfirm: true,
+        showCancel: false,
+      });
+    } catch (error) {
+      console.error("Error during saving PDF", error);
+      setModal({
+        message:
+          "Unexpected error while saving and downloading PDF. Check console for details.",
+        onConfirm: () => setModal({ message: null }),
+        showConfirm: true,
+        showCancel: false,
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleGeneratePdf = async () => {
     console.log("Generate PDF Called");
-    
+
     if (quoteItems.length <= 0) {
       setModal({
         message: "No items in quote.",
@@ -77,14 +153,12 @@ const QuoteDetails = memo(function QuoteDetails({ onEditItem, onDeleteItem, disa
       return;
     }
 
-    console.log("Modal being viewed");
-    
-
     setModal({
       message: "Do you want to save and download the PDF?",
       onConfirm: () => {
         setModal({ message: null });
-        saveAndDownload();
+        saveQuote();
+        navigate("/view-quotes")
       },
       onCancel: () => setModal({ message: null }),
       showConfirm: true,
@@ -93,68 +167,7 @@ const QuoteDetails = memo(function QuoteDetails({ onEditItem, onDeleteItem, disa
   };
 
   console.log("Save pdf calling");
-  
 
-  const saveAndDownload = async () => {
-    setIsSaving(true);
-    try {
-      const response = await fetch(`${VITE_BACKEND_URL}/quote/addQuote`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          quoteItems,
-          totalAmount,
-          customerId,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Quote save failed", errorText);
-        setModal({
-          message: "Failed to save quote to server. Please try again.",
-          onConfirm: () => setModal({ message: null }),
-          showConfirm: true,
-          showCancel: false,
-        });
-        return;
-      }
-
-      const data = await response.json();
-      console.log("Saved quote with ID: ", data.quoteId);
-
-      // Generate and download the PDF
-      const blob = await pdf(
-        <QuotePdfDocument customer={customer} quoteItems={quoteItems} />
-      ).toBlob();
-
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `Quote for ${customer.name}.pdf`;
-      link.click();
-      URL.revokeObjectURL(url);
-      
-      setModal({
-          message: "Quote saved and PDF downloaded successfully!",
-          onConfirm: () => setModal({ message: null }),
-          showConfirm: true,
-          showCancel: false,
-        });
-    } catch (error) {
-      console.error("Error during saving PDF", error);
-      setModal({
-        message: "Unexpected error while saving and downloading PDF. Check console for details.",
-        onConfirm: () => setModal({ message: null }),
-        showConfirm: true,
-        showCancel: false,
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
 
   return (
     <div className={styles.quoteItems}>
@@ -264,12 +277,16 @@ const QuoteDetails = memo(function QuoteDetails({ onEditItem, onDeleteItem, disa
           className={styles.printBtn}
           onClick={handleGeneratePdf}
           disabled={isSaving || disableDelete}
-          title={isSaving || disableDelete ? "Finish editing item or wait for saving to finish" : ""}
+          title={
+            isSaving || disableDelete
+              ? "Finish editing item or wait for saving to finish"
+              : ""
+          }
           style={{
             cursor: isSaving || disableDelete ? "not-allowed" : "pointer",
           }}
         >
-          {isSaving ? "Saving & Generating..." : "Download Quote"}
+          {isSaving ? "Saving & Generating..." : quoteId ? "Update and Download Quote" : "Download Quote"}
         </button>
       </footer>
     </div>
