@@ -1,24 +1,120 @@
+import { useState, useEffect, useMemo } from "react";
 import CustomInput from "./CustomInput";
 import styles from "./QuoteForm.module.css";
+import { calcSqft, calcTotalSqft, calcAmount } from "../utils/calcUtils.js";
 
-function QuoteForm({
-  form,
-  onChange,
-  onAddItem,
-  isEditing,
-  resetForm,
-  errors,
-}) {
+function QuoteForm({ onAddItem, onUpdateItem, editingItem, setEditingItem }) {
+  console.log("QuoteForm is rendering");
+
+  const initialForm = {
+    itemDescription: "",
+    height: "",
+    width: "",
+    quantity: 1,
+    ratePerSqft: 0,
+    // sqft: 0,
+    // totalSqft: 0,
+    // amount: 0,
+    lumpsum: false,
+  };
+
+  const [quoteForm, setQuoteForm] = useState(initialForm);
+
+  const sqft = useMemo(() =>parseFloat(calcSqft(quoteForm.height, quoteForm.width)),[quoteForm.height, quoteForm.width]);
+  const totalSqft = useMemo(() => parseFloat(calcTotalSqft(sqft, quoteForm.quantity)), [sqft, quoteForm.quantity]);
+  const amount = useMemo(() => quoteForm.lumpsum
+    ? parseFloat(quoteForm.ratePerSqft)
+    : parseFloat(calcAmount(totalSqft, quoteForm.ratePerSqft)), [quoteForm.ratePerSqft, quoteForm.lumpsum, totalSqft]);
+
+  const [errors, setErrors] = useState({
+    itemDescription: false,
+    height: false,
+    width: false,
+    quantity: false,
+    ratePerSqft: false,
+  });
+
+  const isEditing = !!editingItem;
+
+  useEffect(() => {
+    if (editingItem) {
+      setQuoteForm(editingItem);
+    }
+  }, [editingItem]);
+
+  const resetForm = () => {
+    setQuoteForm(initialForm);
+    setErrors({
+      itemDescription: false,
+      height: false,
+      width: false,
+      quantity: false,
+      ratePerSqft: false,
+    });
+  };
+
+  // useEffect(() => {
+  //   setQuoteForm((prev) => ({
+  //     ...prev,
+  //     sqft,
+  //     totalSqft,
+  //     amount,
+  //   }));
+  // }, [
+  //   quoteForm.height,
+  //   quoteForm.width,
+  //   quoteForm.quantity,
+  //   quoteForm.ratePerSqft,
+  //   quoteForm.lumpsum,
+  // ]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    const newValue = type === "checkbox" ? checked : value;
+
+    setQuoteForm((prev) => ({ ...prev, [name]: newValue }));
+
+    if (type !== "checkbox" && value.trim() !== "") {
+      setErrors((prev) => ({ ...prev, [name]: false }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const newErrors = {
+      itemDescription: quoteForm.itemDescription.trim() === "",
+      height: quoteForm.height.trim() === "",
+      width: quoteForm.width.trim() === "",
+      quantity: quoteForm.quantity <= 0,
+      ratePerSqft: quoteForm.ratePerSqft <= 0,
+    };
+
+    setErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some((error) => error);
+    if (hasErrors) return;
+
+    if (isEditing) {
+      onUpdateItem({ ...quoteForm, id: editingItem });
+      setEditingItem(null);
+    } else {
+      onAddItem({ ...quoteForm, sqft, totalSqft, amount });
+    }
+
+    resetForm();
+  };
+
   return (
-    <form onSubmit={onAddItem} className={styles.quoteForm}>
+    <form onSubmit={handleSubmit} className={styles.quoteForm}>
       <div className={styles.formItem}>
         <CustomInput
           label="Item Description"
           type="text"
           name="itemDescription"
           id="itemDescription"
-          value={form.itemDescription}
-          onChange={onChange}
+          value={quoteForm.itemDescription}
+          onChange={handleChange}
           className={styles.form}
           error={errors.itemDescription}
         />
@@ -30,8 +126,8 @@ function QuoteForm({
           type="number"
           name="height"
           id="height"
-          value={form.height}
-          onChange={onChange}
+          value={quoteForm.height}
+          onChange={handleChange}
           error={errors.height}
         />
         <CustomInput
@@ -39,8 +135,8 @@ function QuoteForm({
           type="number"
           name="width"
           id="width"
-          value={form.width}
-          onChange={onChange}
+          value={quoteForm.width}
+          onChange={handleChange}
           error={errors.width}
         />
       </div>
@@ -50,8 +146,8 @@ function QuoteForm({
           type="number"
           name="quantity"
           id="quantity"
-          value={form.quantity}
-          onChange={onChange}
+          value={quoteForm.quantity}
+          onChange={handleChange}
           error={errors.quantity}
         />
         <CustomInput
@@ -59,8 +155,8 @@ function QuoteForm({
           type="number"
           name="ratePerSqft"
           id="ratePerSqft"
-          value={form.ratePerSqft}
-          onChange={onChange}
+          value={quoteForm.ratePerSqft}
+          onChange={handleChange}
           error={errors.ratePerSqft}
         />
       </div>
@@ -68,15 +164,15 @@ function QuoteForm({
       <div className={styles.calculationRow}>
         <div className={styles.calculationItem}>
           <h3>SqFt per Item:</h3>
-          <h3>{Number(form.sqft).toFixed(2)}</h3>
+          <h3>{Number(sqft).toFixed(2)}</h3>
         </div>
         <div className={styles.calculationItem}>
           <h3>Total SqFt</h3>
-          <h3>{Number(form.totalSqft).toFixed(2)}</h3>
+          <h3>{Number(totalSqft).toFixed(2)}</h3>
         </div>
         <div className={styles.calculationItem}>
           <h3>Amount</h3>
-          <h3> {Number(form.amount).toFixed(2)}</h3>
+          <h3> {Number(amount).toFixed(2)}</h3>
         </div>
         <div className={styles.calculationItem}>
           <h3>Lumpsum Amount</h3>
@@ -84,8 +180,8 @@ function QuoteForm({
             type="checkbox"
             name="lumpsum"
             id="lumpsum"
-            checked={form.lumpsum}
-            onChange={onChange}
+            checked={quoteForm.lumpsum}
+            onChange={handleChange}
           />
         </div>
       </div>

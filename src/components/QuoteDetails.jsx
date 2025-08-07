@@ -35,6 +35,7 @@ const CustomModal = ({ message, onConfirm, onCancel, showConfirm, showCancel }) 
 
 
 const QuoteDetails = memo(function QuoteDetails({ onEditItem, onDeleteItem, disableDelete }) {
+  console.log('QuoteDetails is rendering'); 
   const { quoteItems } = useQuote();
   const { customer, customerId } = useCustomer();
 
