@@ -36,3 +36,4 @@ build/
 /functions/.env
 .env.development
 .env.production 
+/src/firebase

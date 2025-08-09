@@ -1,6 +1,6 @@
 export const DUMMY_CREDENTIALS = {
   username: "rsdavalbhai",
-  password: "Afran@1234",
+  password: "Afran@12345",
 };
 
 export const isLoggedIn = () => {

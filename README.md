@@ -6,39 +6,40 @@ The "Quotation Maker" is a web application designed to simplify the process of c
 
 The primary goal is to make the quotation generation process efficient, accurate, and easy to manage for small businesses or individuals who frequently need to issue quotes.
 
-## Key Features (Planned)
+## Key Features
 
 * **Intuitive Form for Item Entry:**
 
-  * A dedicated form on the left half of the screen for entering details of each line item (e.g., item name, description, quantity, unit price, tax rate).
+  * Feature for adding customer details and storing quotes for each customer.
 
-  * Dynamic addition/removal of line items.
+  * A dedicated form for entering details of each line item (e.g., item name, description, quantity, unit price, tax rate).
+
+  * Dynamic addition and removal of line items.
+
+  * Easy retrieval for previously stored customers, quotes and editing customer details and quotations.
+
 
 * **Real-time Tabular Display:**
 
-  * The right half of the screen will display all entered items in a clear, tabular format.
+  * All entered items are displayed in a clear, tabular format.
 
-  * Automatic calculation of sub-totals, taxes, and grand total as items are added or modified.
+  * Automatic calculation of sub-totals, taxes, and a grand total as items are added or modified.
 
 * **Quotation Details:**
 
   * Fields for customer information (name, email, mobile, address).
 
-  * Fields for quote number, date, and validity period.
+  * Fields for quote items, date.
 
 * **PDF Generation:**
 
   * Ability to generate a professional-looking PDF document of the complete quotation.
 
-  * Options to include company logo, terms and conditions.
+  * Options to include a company logo and terms and conditions.
 
-* **Data Persistence (Future):**
+* **Data Persistence:**
 
-  * Ability to save quotations for future reference and editing.
-
-  * Load previously saved quotations.
-
-  * Will use SQLite for local data storage as this will be used locally.
+  * Ability to save and load quotations for future reference and editing.
 
 ## Technologies
 
@@ -48,8 +49,14 @@ The primary goal is to make the quotation generation process efficient, accurate
 
 * **HTML/CSS/JavaScript:** Core web technologies, using vanilla CSS for styling.
 
-* **PDF Generation Library (TBD):** A library like `jsPDF` or `react-pdf` will be used for client-side PDF generation.
+* **PDF Generation Library:** A client-side library `react-pdf` is used for PDF generation.
 
-### Backend (Future Integration)
+### Backend
 
-* A backend service will be developed later to handle persistent storage of quotations using SQLite.
+* **Firebase:** Utilized for a powerful and scalable backend and hosting solution.
+
+  * **Firebase Authentication:** Handles user management and authentication.
+
+  * **Cloud Firestore:** A NoSQL database for securely storing quotation data.
+
+  * **Firebase Hosting:** Deploys the application and serves it to users.
