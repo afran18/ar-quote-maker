@@ -1,11 +1,16 @@
-import { createContext, useState, useMemo, useCallback, useContext } from "react";
+import {
+  createContext,
+  useState,
+  useMemo,
+  useCallback,
+  useContext,
+} from "react";
 import { v4 as uuidv4 } from "uuid";
 
 /* eslint-disable react-refresh/only-export-components */
 const QuoteContext = createContext();
 
 export const QuoteProvider = ({ children }) => {
-
   const [quoteItems, setQuoteItems] = useState([]);
   const [quoteId, setQuoteId] = useState(null);
 
@@ -20,18 +25,16 @@ export const QuoteProvider = ({ children }) => {
     );
   };
 
-  
-
   const updateItemInQuote = (updatedItem) => {
     setQuoteItems((prevItems) =>
       prevItems.map((item) => (item.id === updatedItem.id ? updatedItem : item))
     );
   };
 
-    const resetQuoteItems = useCallback(() => {
+  const resetQuoteItems = useCallback(() => {
+    setQuoteId(null);
     setQuoteItems([]);
   }, []);
-
 
   const value = useMemo(
     () => ({
@@ -42,7 +45,7 @@ export const QuoteProvider = ({ children }) => {
       resetQuoteItems,
       quoteId,
       setQuoteId,
-      setQuoteItems
+      setQuoteItems,
     }),
     [quoteItems, resetQuoteItems, quoteId]
   );
@@ -51,4 +54,4 @@ export const QuoteProvider = ({ children }) => {
   );
 };
 
-export const useQuote = () => useContext(QuoteContext)
+export const useQuote = () => useContext(QuoteContext);

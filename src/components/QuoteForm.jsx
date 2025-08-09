@@ -2,8 +2,10 @@ import { useState, useEffect, useMemo } from "react";
 import CustomInput from "./CustomInput";
 import styles from "./QuoteForm.module.css";
 import { calcSqft, calcTotalSqft, calcAmount } from "../utils/calcUtils.js";
+import { useQuote } from "../context/QuoteContext.jsx";
 
 function QuoteForm({ onAddItem, onUpdateItem, editingItem, setEditingItem }) {
+  const { quoteItems } = useQuote();
   console.log("QuoteForm is rendering");
 
   const initialForm = {
@@ -20,11 +22,21 @@ function QuoteForm({ onAddItem, onUpdateItem, editingItem, setEditingItem }) {
 
   const [quoteForm, setQuoteForm] = useState(initialForm);
 
-  const sqft = useMemo(() =>parseFloat(calcSqft(quoteForm.height, quoteForm.width)),[quoteForm.height, quoteForm.width]);
-  const totalSqft = useMemo(() => parseFloat(calcTotalSqft(sqft, quoteForm.quantity)), [sqft, quoteForm.quantity]);
-  const amount = useMemo(() => quoteForm.lumpsum
-    ? parseFloat(quoteForm.ratePerSqft)
-    : parseFloat(calcAmount(totalSqft, quoteForm.ratePerSqft)), [quoteForm.ratePerSqft, quoteForm.lumpsum, totalSqft]);
+  const sqft = useMemo(
+    () => parseFloat(calcSqft(quoteForm.height, quoteForm.width)),
+    [quoteForm.height, quoteForm.width]
+  );
+  const totalSqft = useMemo(
+    () => parseFloat(calcTotalSqft(sqft, quoteForm.quantity)),
+    [sqft, quoteForm.quantity]
+  );
+  const amount = useMemo(
+    () =>
+      quoteForm.lumpsum
+        ? parseFloat(quoteForm.ratePerSqft)
+        : parseFloat(calcAmount(totalSqft, quoteForm.ratePerSqft)),
+    [quoteForm.ratePerSqft, quoteForm.lumpsum, totalSqft]
+  );
 
   const [errors, setErrors] = useState({
     itemDescription: false,
@@ -38,6 +50,7 @@ function QuoteForm({ onAddItem, onUpdateItem, editingItem, setEditingItem }) {
 
   useEffect(() => {
     if (editingItem) {
+      console.log("Editing Item: ", editingItem);
       setQuoteForm(editingItem);
     }
   }, [editingItem]);
@@ -96,8 +109,13 @@ function QuoteForm({ onAddItem, onUpdateItem, editingItem, setEditingItem }) {
     if (hasErrors) return;
 
     if (isEditing) {
-      onUpdateItem({ ...quoteForm, id: editingItem });
+      console.log("Updated Item: ", quoteForm);
+      console.log(editingItem);
+      
+
+      onUpdateItem(quoteForm);
       setEditingItem(null);
+      console.log("Updated Quote Array: ", quoteItems);
     } else {
       onAddItem({ ...quoteForm, sqft, totalSqft, amount });
     }
@@ -185,22 +203,22 @@ function QuoteForm({ onAddItem, onUpdateItem, editingItem, setEditingItem }) {
           />
         </div>
       </div>
-        <div className={styles.buttonGroup}>
-          <button
-            type="reset"
-            className={styles.buttonReset}
-            onClick={resetForm}
-            disabled={isEditing}
-            style={{
-              cursor: isEditing ? "not-allowed" : "pointer",
-            }}
-          >
-            Reset
-          </button>
-          <button type="submit" className={styles.buttonSubmit}>
-            {isEditing ? "Update Item" : "Add Item"}
-          </button>
-        </div>
+      <div className={styles.buttonGroup}>
+        <button
+          type="reset"
+          className={styles.buttonReset}
+          onClick={resetForm}
+          disabled={isEditing}
+          style={{
+            cursor: isEditing ? "not-allowed" : "pointer",
+          }}
+        >
+          Reset
+        </button>
+        <button type="submit" className={styles.buttonSubmit}>
+          {isEditing ? "Update Item" : "Add Item"}
+        </button>
+      </div>
     </form>
   );
 }

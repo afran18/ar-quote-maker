@@ -18,7 +18,7 @@ function QuoteFormPage() {
     } = useQuote();
 
     const [editingItem, setEditingItem] = useState(null);
-
+    
     return (
         <div className={styles.container}>
             <div className={styles.formSection}>

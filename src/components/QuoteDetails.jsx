@@ -2,6 +2,7 @@ import React, { useState, memo } from "react";
 import styles from "./QuoteDetails.module.css";
 import { useCustomer } from "../context/CustomerContext.jsx";
 import { useQuote } from "../context/QuoteContext.jsx";
+import { useResetQuote } from "../context/useResetQoute.js";
 import { pdf } from "@react-pdf/renderer";
 import QuotePdfDocument from "./QuotePdfDocument";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -44,8 +45,8 @@ const QuoteDetails = memo(function QuoteDetails({
   onDeleteItem,
   disableDelete,
 }) {
-
   const navigate = useNavigate();
+  const { resetQuote } = useResetQuote();
   console.log("QuoteDetails is rendering");
   const { quoteItems, quoteId } = useQuote();
   const { customer, customerId } = useCustomer();
@@ -109,6 +110,7 @@ const QuoteDetails = memo(function QuoteDetails({
       link.download = `Quote for ${customer.name}.pdf`;
       link.click();
       URL.revokeObjectURL(urlBlob);
+      resetQuote();
 
       setModal({
         message: "Quote saved and PDF downloaded successfully!",
@@ -158,7 +160,7 @@ const QuoteDetails = memo(function QuoteDetails({
       onConfirm: () => {
         setModal({ message: null });
         saveQuote();
-        navigate("/view-quotes")
+        navigate("/view-quotes");
       },
       onCancel: () => setModal({ message: null }),
       showConfirm: true,
@@ -167,7 +169,6 @@ const QuoteDetails = memo(function QuoteDetails({
   };
 
   console.log("Save pdf calling");
-
 
   return (
     <div className={styles.quoteItems}>
@@ -286,7 +287,11 @@ const QuoteDetails = memo(function QuoteDetails({
             cursor: isSaving || disableDelete ? "not-allowed" : "pointer",
           }}
         >
-          {isSaving ? "Saving & Generating..." : quoteId ? "Update and Download Quote" : "Download Quote"}
+          {isSaving
+            ? "Saving & Generating..."
+            : quoteId
+            ? "Update and Download Quote"
+            : "Download Quote"}
         </button>
       </footer>
     </div>
