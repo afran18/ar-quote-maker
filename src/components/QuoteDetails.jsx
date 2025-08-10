@@ -47,7 +47,6 @@ const QuoteDetails = memo(function QuoteDetails({
 }) {
   const navigate = useNavigate();
   const { resetQuote } = useResetQuote();
-  console.log("QuoteDetails is rendering");
   const { quoteItems, quoteId } = useQuote();
   const { customer, customerId } = useCustomer();
 
@@ -97,8 +96,7 @@ const QuoteDetails = memo(function QuoteDetails({
         return;
       }
 
-      const data = await response.json();
-      console.log("Saved quote with ID: ", data.quoteId);
+      // const data = await response.json();
 
       const blob = await pdf(
         <QuotePdfDocument customer={customer} quoteItems={quoteItems} />
@@ -133,7 +131,6 @@ const QuoteDetails = memo(function QuoteDetails({
   };
 
   const handleGeneratePdf = async () => {
-    console.log("Generate PDF Called");
 
     if (quoteItems.length <= 0) {
       setModal({
@@ -167,8 +164,6 @@ const QuoteDetails = memo(function QuoteDetails({
       showCancel: true,
     });
   };
-
-  console.log("Save pdf calling");
 
   return (
     <div className={styles.quoteItems}>

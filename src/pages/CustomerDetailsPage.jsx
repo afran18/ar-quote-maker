@@ -75,9 +75,6 @@ function CustomerDetailsPage() {
     setLoading(true);
 
     try {
-      console.log("before update editing state: ", isEditingCustomer);
-      console.log("before update customer id: ", customer.id);
-
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
       const url = isEditingCustomer
@@ -96,10 +93,6 @@ function CustomerDetailsPage() {
         body: JSON.stringify(customerForm),
       });
 
-      console.log("Fetch response object:", response);
-
-      console.log("Response status:", response.status);
-
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Server responded with error:", errorText);
@@ -107,12 +100,7 @@ function CustomerDetailsPage() {
       }
 
       const data = await response.json();
-      console.log("Data : ", data);
-      console.log("Customer: ", data.customer);
-
       setCustomerId(data.customer.id);
-      console.log("Customer ID: ", data.customer.id);
-
       const quoteDate = new Date().toLocaleDateString("en-IN", {
         day: "numeric",
         month: "long",

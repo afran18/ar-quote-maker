@@ -2,11 +2,9 @@ import { useState, useEffect, useMemo } from "react";
 import CustomInput from "./CustomInput";
 import styles from "./QuoteForm.module.css";
 import { calcSqft, calcTotalSqft, calcAmount } from "../utils/calcUtils.js";
-import { useQuote } from "../context/QuoteContext.jsx";
 
 function QuoteForm({ onAddItem, onUpdateItem, editingItem, setEditingItem }) {
-  const { quoteItems } = useQuote();
-  console.log("QuoteForm is rendering");
+  // const { quoteItems } = useQuote();
 
   const initialForm = {
     itemDescription: "",
@@ -50,7 +48,6 @@ function QuoteForm({ onAddItem, onUpdateItem, editingItem, setEditingItem }) {
 
   useEffect(() => {
     if (editingItem) {
-      console.log("Editing Item: ", editingItem);
       setQuoteForm(editingItem);
     }
   }, [editingItem]);
@@ -109,13 +106,8 @@ function QuoteForm({ onAddItem, onUpdateItem, editingItem, setEditingItem }) {
     if (hasErrors) return;
 
     if (isEditing) {
-      console.log("Updated Item: ", quoteForm);
-      console.log(editingItem);
-      
-
       onUpdateItem(quoteForm);
       setEditingItem(null);
-      console.log("Updated Quote Array: ", quoteItems);
     } else {
       onAddItem({ ...quoteForm, sqft, totalSqft, amount });
     }

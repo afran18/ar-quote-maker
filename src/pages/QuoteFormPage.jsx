@@ -9,7 +9,6 @@ import { useQuote } from "../context/QuoteContext.jsx";
 const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 function QuoteFormPage() {
-    console.log("QuoteFormPage is rendering");
     const {
         addItemToQuote,
         quoteItems,

@@ -12,7 +12,7 @@ const PAGE_SIZE = 5;
 function ViewQuotesPage() {
   const navigate = useNavigate();
   const { updateCustomer, setCustomerId, setIsEditingCustomer } = useCustomer();
-  const { quoteId, setQuoteId, quoteItems,setQuoteItems } = useQuote();
+  const { setQuoteId,setQuoteItems } = useQuote();
 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -68,11 +68,6 @@ function ViewQuotesPage() {
     let docIdToStartAfter;
     let newPageIndex;
 
-    console.log(
-      `fetchCustomers called. Direction: ${direction}, Current Index (before update): ${currentIndex}, History: `,
-      currentHistory
-    );
-
     if (direction === "next") {
       newPageIndex = currentIndex + 1;
 
@@ -115,11 +110,6 @@ function ViewQuotesPage() {
       });
 
       setCurrentPageIndex(newPageIndex);
-
-      console.log(
-        `fetchCustomers done. Fetched ${fetchedCustomers.length} customers. New Index: ${newPageIndex}, Last Visible ID of fetched page: ${newLastVisibleId}, Updated History: `,
-        customerPageHistoryRef.current
-      );
     } catch (err) {
       console.error("Error fetching customers:", err);
       setError("Failed to load customers. Please try again.");
@@ -140,10 +130,6 @@ function ViewQuotesPage() {
     let docIdToStartAfter;
     let newPageIndex;
 
-    console.log(
-      `fetchQuotes called. Direction: ${direction}, Current Index (before update): ${currentIndex}, History: `,
-      currentHistory
-    );
 
     if (direction === "next") {
       newPageIndex = currentIndex + 1;
@@ -205,10 +191,6 @@ function ViewQuotesPage() {
 
       setCurrentQuotePageIndex(newPageIndex);
 
-      console.log(
-        `fetchQuotes done. Fetched ${fetchedQuotes.length} quotes. New Index: ${newPageIndex}, Last Visible ID of fetched page: ${newLastVisibleId}, Updated History: `,
-        quotePageHistoryRef.current
-      );
     } catch (err) {
       console.error("Error fetching quotes:", err);
       setError("Failed to load quotes. Please try again.");
@@ -221,10 +203,8 @@ function ViewQuotesPage() {
 
   useEffect(() => {
     if (activeTab === "customers") {
-      console.log("useEffect: activeTab customers, triggering initial fetch");
       fetchCustomers("initial");
     } else if (activeTab === "quotes") {
-      console.log("useEffect: activeTab quotes, triggering initial fetch");
       fetchQuotes("initial");
     }
   }, [activeTab, fetchCustomers, fetchQuotes]);
@@ -249,18 +229,15 @@ function ViewQuotesPage() {
   // };
 
   const handleNextPage = () => {
-    console.log(`Clicked next in ${activeTab}`);
     if (loading) return;
 
     if (activeTab === "customers") {
       if (!lastVisibleCustomerDocId && customers.length < PAGE_SIZE) {
-        console.log("No more customers to load for next page.");
         return;
       }
       fetchCustomers("next");
     } else if (activeTab === "quotes") {
       if (!lastVisibleQuoteDocId && quotes.length < PAGE_SIZE) {
-        console.log("No more quotes to load for next page.");
         return;
       }
       fetchQuotes("next");
@@ -268,7 +245,6 @@ function ViewQuotesPage() {
   };
 
   const handlePreviousPage = () => {
-    console.log(`Clicked prev in ${activeTab}`);
     if (loading) return;
 
     if (activeTab === "customers" && currentPageIndex > 0) {
@@ -292,23 +268,16 @@ function ViewQuotesPage() {
     setQuoteId(fetchedQuote.id);
     setQuoteItems(fetchedQuote.quoteItems);
 
-    console.log("Selected Quote: ", fetchedQuote);
-    console.log("Quote ID from context: ", quoteId);
-    console.log("Quote context: ", quoteItems);
-
     const customerResponse = await axios.get(
       `${VITE_BACKEND_URL}/customer/${fetchedQuote.customerId}`
     );
 
     const fetchedCustomer = customerResponse.data.customer;
 
-    console.log("Fetched Customer: ", fetchedCustomer);
-
     updateCustomer(fetchedCustomer);
     setCustomerId(fetchedCustomer.id)
     
 
-    console.log("Customer from context: ", fetchedCustomer);
 
     navigate("/quote");
   };

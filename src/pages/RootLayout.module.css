@@ -48,9 +48,16 @@
 .mainContent {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px); /* fill remaining after navbar */
+  min-height: calc(100vh - 60px); /* fill remaining after navbar */
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  overflow: hidden; /* hide page-level scroll */
+  overflow: auto; /* hide page-level scroll */
+}
+
+@media (min-width: 769px) {
+  .mainContent {
+    height: calc(100vh - 60px);
+    overflow: hidden;
+  }
 }
