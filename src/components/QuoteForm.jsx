@@ -105,8 +105,15 @@ function QuoteForm({ onAddItem, onUpdateItem, editingItem, setEditingItem }) {
     const hasErrors = Object.values(newErrors).some((error) => error);
     if (hasErrors) return;
 
+    const updatedItem = {
+    ...quoteForm,
+    sqft,
+    totalSqft,
+    amount,
+  };
+
     if (isEditing) {
-      onUpdateItem(quoteForm);
+      onUpdateItem({ ...updatedItem, id: editingItem.id });
       setEditingItem(null);
     } else {
       onAddItem({ ...quoteForm, sqft, totalSqft, amount });
